@@ -1,36 +1,65 @@
 <?php
-namespace Joomla\Component\Audatoria\Administrator\Service;
-defined('_JEXEC') or die;
+/**
+ * @package     Joomla.Site
+ * @subpackage  com_audatoria
+ *
+ * @copyright   Copyright (C) 2025 Joel Salazar. Todos los derechos reservados.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
 
-use Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
-use Joomla\CMS\Extension\ComponentInterface;
-use Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
-use Joomla\CMS\Extension\Service\Provider\MVCFactory;
-use Joomla\CMS\HTML\Registry;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+namespace Salazarjoelo\Component\Audatoria\Site\Service; // <-- NAMESPACE CORRECTO
+
+\defined('_JEXEC') or die;
+
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
-use Joomla\Component\Audatoria\Administrator\Extension\AudatoriaComponent;
+use Joomla\CMS\Extension\ComponentInterface;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\MVC\View\CategoryView; // Ejemplo si necesitas vistas específicas
+use Joomla\CMS\MVC\View\HtmlView;     // Ejemplo si necesitas vistas específicas
 
-class ServiceProvider implements ServiceProviderInterface
+
+/**
+ * Proveedor de Servicios para el componente Audatoria (Sitio)
+ *
+ * @since  1.0.0
+ */
+class Provider implements ServiceProviderInterface
 {
-    public function register(Container $container)
-    {
-        $container->registerServiceProvider(new MVCFactory('\\Joomla\\Component\\Audatoria\\Administrator'));
-        $container->registerServiceProvider(new ComponentDispatcherFactory('\\Joomla\\Component\\Audatoria'));
+	/**
+	 * Registers the service provider with a DI container.
+	 *
+	 * @param   Container $container The DI container.
+	 *
+	 * @return  void
+	 *
+	 * @since   1.0.0
+	 */
+	public function register(Container $container): void
+	{
+		// Aquí es donde puedes registrar servicios específicos o sobreescribir
+        // la forma en que se crean las clases MVC si necesitas lógica personalizada.
 
+        /* Ejemplo: Sobreescribir cómo se crea la vista HtmlView
         $container->set(
-            ComponentInterface::class,
+            HtmlView::class,
             function (Container $container) {
-                $component = new AudatoriaComponent(
-                    $container->get(ComponentDispatcherFactoryInterface::class)
+                $view = new \Salazarjoelo\Component\Audatoria\Site\View\Auditoria\HtmlView(
+                    $container->get(MVCFactoryInterface::class),
+                    $container->get('ComponentDispatcherShared'), // Obtener el dispatcher
+                    $container->get(\Joomla\Event\DispatcherInterface::class) // Obtener el event dispatcher
                 );
 
-                $component->setMVCFactory($container->get(MVCFactoryInterface::class));
-                $component->setRegistry($container->get(Registry::class));
+                // Inyectar dependencias adicionales si es necesario
+                // $view->setSomething(...);
 
-                return $component;
+                return $view;
             }
         );
-    }
+        */
+
+        // Por ahora, si no necesitas personalización avanzada, este archivo
+        // puede simplemente existir y estar correctamente referenciado
+        // en el manifiesto y el punto de entrada.
+	}
 }

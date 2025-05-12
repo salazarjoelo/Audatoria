@@ -1,35 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" method="upgrade" version="5.0">
-    <name>COM_AUDATORIA</name>
-    <namespace path="src">Joomla\Component\Audatoria</namespace>
-    <version>1.0.2</version>
-    <creationDate>2024-03-20</creationDate>
+<extension type="component" method="upgrade" version="5.0" client="site">
+    <name>com_audatoria</name>
     <author>Joel Salazar</author>
-    <authorEmail>contacto@joelsalazar.mx</authorEmail>
-    <copyright>Copyright (C) 2024 Audatoria. All rights reserved.</copyright>
-    <license>GNU GPL v3</license>
-    <description>COM_AUDATORIA_DESC</description>
+    <creationDate>Mayo 2025</creationDate>
+    <copyright>Copyright (C) 2025 Joel Salazar. Todos los derechos reservados.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>salazarjoelo@gmail.com</authorEmail>
+    <authorUrl>https://github.com/salazarjoelo</authorUrl>
+    <version>1.0.1</version> <description>COM_AUDATORIA_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
-    
-    <files>
-        <folder>administrator</folder>
-		<folder>cli</folder>
+    <php_minimum>8.1</php_minimum>
+    <joomla_minimum>5.0</joomla_minimum>
+
+    <namespace path="src">Salazarjoelo\Component\Audatoria\Site</namespace>
+
+    <files folder="site">
+        <filename>Audatoria.php</filename>
+        <filename>composer.json</filename>
+        <filename>composer.lock</filename> <folder>src</folder>       <folder>services</folder>
         <folder>language</folder>
-		<folder>media</folder>
-        <folder>site</folder>
-		<folder>sql</folder>
-        <folder>tmpl</folder>
-    </files>
+        <folder>vendor</folder>   </files>
+
+    <languages folder="site/language">
+        <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
+        <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
+    </languages>
 
     <administration>
-        <menu>COM_AUDATORIA</menu>
-        <submenu>
-            <menu link="index.php?option=com_audatoria">Dashboard</menu>
-        </submenu>
+        <menu img="class:bars">COM_AUDATORIA_MENU</menu> <languages folder="admin/language">
+             <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
+        </languages>
     </administration>
 
-    <updateservers>
-        <server type="collection">https://raw.githubusercontent.com/salazarjoelo/Audatoria/main/updates.xml</server>
-    </updateservers>
+    <serviceproviders>
+         <serviceprovider>Salazarjoelo\Component\Audatoria\Site\Service\Provider</serviceprovider>
+    </serviceproviders>
+
 </extension>
