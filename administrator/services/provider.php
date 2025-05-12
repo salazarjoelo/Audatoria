@@ -1,4 +1,5 @@
 <?php
+namespace Joomla\Component\Audatoria\Administrator\Service;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;

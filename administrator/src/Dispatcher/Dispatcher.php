@@ -1,5 +1,5 @@
 <?php
-namespace Joomla\Component\Audatoria\Dispatcher;
+namespace Joomla\Component\Audatoria\Dispatcher; // Namespace actualizado
 
 defined('_JEXEC') or die;
 
