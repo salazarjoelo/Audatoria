@@ -1,12 +1,12 @@
 <?php
+namespace Joomla\Component\Audatoria\Dispatcher;
+
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Dispatcher\ComponentDispatcher;
 
-class AudatoriaDispatcher extends ComponentDispatcher
+class Dispatcher extends ComponentDispatcher
 {
-    protected $defaultController = 'dashboard';
-
     public function dispatch()
     {
         $this->loadLanguage();

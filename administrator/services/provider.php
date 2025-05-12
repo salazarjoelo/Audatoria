@@ -15,9 +15,9 @@ class ServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $container)
     {
-        $container->registerServiceProvider(new MVCFactory('\\Joomla\\Component\\Audatoria'));
+        $container->registerServiceProvider(new MVCFactory('\\Joomla\\Component\\Audatoria\\Administrator'));
         $container->registerServiceProvider(new ComponentDispatcherFactory('\\Joomla\\Component\\Audatoria'));
-        
+
         $container->set(
             ComponentInterface::class,
             function (Container $container) {

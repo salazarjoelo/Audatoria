@@ -2,35 +2,31 @@
 <extension type="component" method="upgrade" version="5.0">
     <name>COM_AUDATORIA</name>
     <namespace path="src">Joomla\Component\Audatoria</namespace>
-    <version>1.0.1</version>
-    <creationDate>2024-03-15</creationDate>
+    <version>1.0.2</version>
+    <creationDate>2024-03-20</creationDate>
     <author>Joel Salazar</author>
-    <authorEmail>salazarjoelo@gmail.com</authorEmail>
+    <authorEmail>contacto@joelsalazar.mx</authorEmail>
     <copyright>Copyright (C) 2024 Audatoria. All rights reserved.</copyright>
-    <license>GNU General Public License version 3 or later</license>
+    <license>GNU GPL v3</license>
     <description>COM_AUDATORIA_DESC</description>
 
     <scriptfile>script.php</scriptfile>
     
     <files>
-        <folder>services</folder>
-        <folder>src</folder>
+        <folder>administrator</folder>
         <folder>language</folder>
+        <folder>src</folder>
         <folder>tmpl</folder>
     </files>
 
     <administration>
         <menu>COM_AUDATORIA</menu>
-        <files>
-            <folder>services</folder>
-            <folder>src</folder>
-            <folder>language</folder>
-        </files>
+        <submenu>
+            <menu link="index.php?option=com_audatoria">Dashboard</menu>
+        </submenu>
     </administration>
 
     <updateservers>
-        <server type="extension" name="Audatoria Updates">https://www.audatoria.com/updates.xml</server>
+        <server type="collection">https://raw.githubusercontent.com/salazarjoelo/Audatoria/main/updates.xml</server>
     </updateservers>
-
-    <target name="5.0.0">5.0.0</target>
 </extension>
