@@ -14,8 +14,11 @@
     
     <files>
         <folder>administrator</folder>
+		<folder>cli</folder>
         <folder>language</folder>
-        <folder>src</folder>
+		<folder>media</folder>
+        <folder>site</folder>
+		<folder>sql</folder>
         <folder>tmpl</folder>
     </files>
 
