@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <fieldset name="basic" label="COM_AUDATORIA_FIELDSET_BASIC_TIMELINE_LABEL">
+    <field name="id" type="hidden" />
+    <field
+        name="title"
+        type="text"
+        label="COM_AUDATORIA_FIELD_TITLE"
+        description="COM_AUDATORIA_FIELD_TIMELINE_TITLE_DESC"
+        required="true"
+        size="40" />
+    <field
+        name="description"
+        type="textarea"
+        label="COM_AUDATORIA_FIELD_DESCRIPTION"
+        description="COM_AUDATORIA_FIELD_TIMELINE_DESCRIPTION_DESC"
+        rows="5"
+        cols="40" />
+  </fieldset>
+  <fieldset name="publish" label="COM_AUDATORIA_FIELDSET_PUBLISHING_LABEL">
+        <field
+            name="published"
+            type="list"
+            label="JSTATUS"
+            description="JFIELD_PUBLISHED_DESC"
+            class="form-select"
+            default="1"
+            size="1">
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="2">JARCHIVED</option>
+            <option value="-2">JTRASHED</option>
+        </field>
+         <field
+            name="access"
+            type="accesslevel"
+            label="JFIELD_ACCESS_LABEL"
+            description="JFIELD_ACCESS_DESC"
+            class="form-select" />
+        <field
+            name="language"
+            type="language"
+            label="JFIELD_LANGUAGE_LABEL"
+            description="JFIELD_LANGUAGE_DESC"
+            class="form-select">
+            <option value="*">JALL</option>
+        </field>
+    </fieldset>
+</form>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <fieldset name="basic" label="COM_AUDATORIA_FIELDSET_BASIC_CHANNEL_LABEL">
+    <field name="id" type="hidden" />
+    <field
+        name="channel_id"
+        type="text"
+        label="COM_AUDATORIA_FIELD_CHANNEL_ID_LABEL"
+        description="COM_AUDATORIA_FIELD_CHANNEL_ID_DESC"
+        required="true"
+        size="40" />
+    <field
+        name="title"
+        type="text"
+        label="COM_AUDATORIA_FIELD_TITLE"
+        description="COM_AUDATORIA_FIELD_CHANNEL_TITLE_DESC"
+        required="false"
+        size="40" />
+    <field
+        name="timeline_id"
+        type="sql"
+        label="COM_AUDATORIA_FIELD_TIMELINE_ID_LABEL"
+        description="COM_AUDATORIA_FIELD_CHANNEL_TIMELINE_ID_DESC"
+        query="SELECT id AS value, title AS text FROM #__audatoria_timelines ORDER BY title ASC"
+        key_field="value"
+        value_field="text"
+        required="true"
+        class="form-select">
+            <option value="">COM_AUDATORIA_SELECT_TIMELINE_PLACEHOLDER</option>
+    </field>
+    <field
+        name="enabled"
+        type="radio"
+        label="COM_AUDATORIA_FIELD_ENABLED_LABEL"
+        description="COM_AUDATORIA_FIELD_ENABLED_DESC"
+        default="1"
+        class="btn-group btn-group-yesno">
+      <option value="1">JYES</option>
+      <option value="0">JNO</option>
+    </field>
+  </fieldset>
+</form>

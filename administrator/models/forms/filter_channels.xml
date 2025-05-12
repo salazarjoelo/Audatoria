@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fields name="filter">
+		<field
+			name="search"
+			type="text"
+			inputmode="search"
+			label="COM_AUDATORIA_FILTER_SEARCH_LABEL"
+			description="COM_AUDATORIA_FILTER_SEARCH_CHANNEL_DESC"
+			hint="COM_AUDATORIA_FILTER_SEARCH_CHANNEL_HINT"
+            class="js-stools-field-filter"
+        />
+
+		<field
+			name="state"
+			type="list"
+			label="COM_AUDATORIA_FILTER_STATE_LABEL"
+			description="COM_AUDATORIA_FILTER_STATE_DESC"
+            onchange="this.form.submit();"
+            >
+			<option value="">COM_AUDATORIA_FILTER_SELECT_STATE</option>
+            <option value="1">COM_AUDATORIA_ENABLED</option>
+            <option value="0">COM_AUDATORIA_DISABLED</option>
+		</field>
+        
+         <field
+            name="timeline_id"
+            type="sql"
+            label="COM_AUDATORIA_FILTER_TIMELINE_LABEL"
+            onchange="this.form.submit();"
+            query="SELECT id AS value, title AS text FROM #__audatoria_timelines ORDER BY title ASC"
+            key_field="value"
+            value_field="text"
+            >
+            <option value="">COM_AUDATORIA_FILTER_SELECT_TIMELINE</option>
+        </field>
+
+	</fields>
+	<fields name="list">
+		<field
+			name="fullordering"
+			type="list"
+			label="JGLOBAL_SORT_BY"
+            description="JGLOBAL_SORT_BY"
+			onchange="this.form.submit();"
+			default="a.title ASC"
+            validate="options"
+            >
+            <option value="">JGLOBAL_SORT_BY</option>
+            <option value="a.title ASC">JGLOBAL_TITLE_ASC</option>
+            <option value="a.title DESC">JGLOBAL_TITLE_DESC</option>
+            <option value="a.channel_id ASC">COM_AUDATORIA_FIELD_CHANNEL_ID_LABEL_ASC</option>
+            <option value="a.channel_id DESC">COM_AUDATORIA_FIELD_CHANNEL_ID_LABEL_DESC</option>
+            <option value="timeline_title ASC">COM_AUDATORIA_TIMELINE_ASC</option>
+            <option value="timeline_title DESC">COM_AUDATORIA_TIMELINE_DESC</option>
+            <option value="a.state ASC">JSTATUS_ASC</option>
+            <option value="a.state DESC">JSTATUS_DESC</option>
+             <option value="a.last_checked ASC">COM_AUDATORIA_FIELD_LAST_CHECKED_ASC</option>
+            <option value="a.last_checked DESC">COM_AUDATORIA_FIELD_LAST_CHECKED_DESC</option>
+            <option value="a.id ASC">JGRID_HEADING_ID_ASC</option>
+            <option value="a.id DESC">JGRID_HEADING_ID_DESC</option>
+        </field>
+
+		<field
+			name="limit"
+			type="limitbox"
+			label="JGLOBAL_LIMIT"
+            description="JGLOBAL_LIMIT"
+			class="input-mini"
+			default="25"
+			onchange="this.form.submit();"
+        />
+	</fields>
+</form>

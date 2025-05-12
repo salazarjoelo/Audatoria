@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="basic" label="COM_AUDATORIA_FIELDSET_BASIC_ITEM_LABEL">
+        <field
+            name="id"
+            type="hidden" />
+        <field
+            name="timeline_id"
+            type="sql"
+            label="COM_AUDATORIA_FIELD_TIMELINE_ID_LABEL"
+            description="COM_AUDATORIA_FIELD_TIMELINE_ID_DESC"
+            query="SELECT id AS value, title AS text FROM #__audatoria_timelines ORDER BY title ASC"
+            key_field="value"
+            value_field="text"
+            required="true"
+            class="form-select">
+                <option value="">COM_AUDATORIA_SELECT_TIMELINE_PLACEHOLDER</option>
+        </field>
+        <field
+            name="title"
+            type="text"
+            label="COM_AUDATORIA_FIELD_TITLE"
+            description="COM_AUDATORIA_FIELD_TITLE_DESC"
+            required="true"
+            size="40"
+            maxlength="255" />
+        <field
+            name="description"
+            type="editor"
+            label="COM_AUDATORIA_FIELD_DESCRIPTION"
+            description="COM_AUDATORIA_FIELD_DESCRIPTION_DESC"
+            buttons="true"
+            hide="false"
+            filter="safehtml" /> <field
+            name="start_date"
+            type="calendar"
+            label="COM_AUDATORIA_FIELD_START_DATE"
+            description="COM_AUDATORIA_FIELD_START_DATE_DESC"
+            required="true"
+            format="%Y-%m-%d %H:%M:%S"
+            showtime="true" />
+        <field
+            name="end_date"
+            type="calendar"
+            label="COM_AUDATORIA_FIELD_END_DATE"
+            description="COM_AUDATORIA_FIELD_END_DATE_DESC"
+            format="%Y-%m-%d %H:%M:%S"
+            showtime="true" />
+    </fieldset>
+
+    <fieldset name="media" label="COM_AUDATORIA_FIELDSET_MEDIA_LABEL">
+        <field
+            name="media_type"
+            type="list"
+            label="COM_AUDATORIA_FIELD_MEDIA_TYPE"
+            description="COM_AUDATORIA_FIELD_MEDIA_TYPE_DESC"
+            default="youtube"
+            class="form-select">
+            <option value="text">COM_AUDATORIA_MEDIA_TYPE_TEXT</option>
+            <option value="image">COM_AUDATORIA_MEDIA_TYPE_IMAGE</option>
+            <option value="video">COM_AUDATORIA_MEDIA_TYPE_VIDEO</option> <option value="youtube">COM_AUDATORIA_MEDIA_TYPE_YOUTUBE</option>
+            <option value="vimeo">COM_AUDATORIA_MEDIA_TYPE_VIMEO</option>
+            <option value="soundcloud">COM_AUDATORIA_MEDIA_TYPE_SOUNDCLOUD</option>
+            <option value="embed">COM_AUDATORIA_MEDIA_TYPE_EMBED</option> </field>
+        <field
+            name="media_url"
+            type="url"
+            label="COM_AUDATORIA_FIELD_MEDIA_URL"
+            description="COM_AUDATORIA_FIELD_MEDIA_URL_DESC"
+            filter="url"
+            size="50" />
+        <field
+            name="media_caption"
+            type="text"
+            label="COM_AUDATORIA_FIELD_MEDIA_CAPTION_LABEL"
+            description="COM_AUDATORIA_FIELD_MEDIA_CAPTION_DESC"
+            size="40" />
+        <field
+            name="media_credit"
+            type="text"
+            label="COM_AUDATORIA_FIELD_MEDIA_CREDIT_LABEL"
+            description="COM_AUDATORIA_FIELD_MEDIA_CREDIT_DESC"
+            size="40" />
+         </fieldset>
+
+    <fieldset name="location" label="COM_AUDATORIA_FIELDSET_LOCATION_LABEL">
+        <field
+            name="location_name"
+            type="text"
+            label="COM_AUDATORIA_FIELD_LOCATION_NAME"
+            description="COM_AUDATORIA_FIELD_LOCATION_NAME_DESC"
+            size="40" />
+        <field
+            name="lat"
+            type="text"
+            label="COM_AUDATORIA_FIELD_LAT"
+            description="COM_AUDATORIA_FIELD_LAT_DESC"
+            filter="float"
+            size="20" />
+        <field
+            name="lng"
+            type="text"
+            label="COM_AUDATORIA_FIELD_LNG"
+            description="COM_AUDATORIA_FIELD_LNG_DESC"
+            filter="float"
+            size="20" />
+    </fieldset>
+
+    <fieldset name="publish" label="COM_AUDATORIA_FIELDSET_PUBLISHING_LABEL">
+        <field
+            name="published"
+            type="list"
+            label="JSTATUS"
+            description="JFIELD_PUBLISHED_DESC"
+            class="form-select"
+            default="1"
+            size="1">
+            <option value="1">JPUBLISHED</option>
+            <option value="0">JUNPUBLISHED</option>
+            <option value="2">JARCHIVED</option>
+            <option value="-2">JTRASHED</option>
+        </field>
+         <field
+            name="access"
+            type="accesslevel"
+            label="JFIELD_ACCESS_LABEL"
+            description="JFIELD_ACCESS_DESC"
+            class="form-select" />
+        <field
+            name="language"
+            type="language"
+            label="JFIELD_LANGUAGE_LABEL"
+            description="JFIELD_LANGUAGE_DESC"
+            class="form-select">
+            <option value="*">JALL</option>
+        </field>
+        <field
+            name="ordering"
+            type="number"
+            label="COM_AUDATORIA_FIELD_ORDERING"
+            description="COM_AUDATORIA_FIELD_ORDERING_DESC" />
+    </fieldset>
+</form>
