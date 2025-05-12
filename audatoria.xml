@@ -1,89 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="5.0" method="upgrade">
-    <name>com_audatoria</name>
-    <creationDate>2025-05-12</creationDate>
+<extension type="component" method="upgrade" version="5.0">
+    <name>COM_AUDATORIA</name>
+    <namespace path="src">Joomla\Component\Audatoria</namespace>
+    <version>1.0.1</version>
+    <creationDate>2024-03-15</creationDate>
     <author>Joel Salazar</author>
-    <authorEmail>joel.salazar@example.com</authorEmail>
-    <authorUrl>http://example.com</authorUrl>
-    <copyright>Copyright (C) 2025 Joel Salazar. Todos los derechos reservados.</copyright>
-    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <version>1.1.5</version> <description>COM_AUDATORIA_XML_DESCRIPTION</description>
-    <namespace>Joomla\Component\Audatoria</namespace>
+    <authorEmail>salazarjoelo@gmail.com</authorEmail>
+    <copyright>Copyright (C) 2024 Audatoria. All rights reserved.</copyright>
+    <license>GNU General Public License version 3 or later</license>
+    <description>COM_AUDATORIA_DESC</description>
 
-    <administration>
-        <menu link="index.php?option=com_audatoria&amp;view=timelines">COM_AUDATORIA_MENU_ADMIN</menu>
-        <files folder="administrator">
-            <filename>audatoria.php</filename>
-            <filename>access.xml</filename>
-            <filename>index.html</filename>
-            <folder>controllers</folder>
-            <folder>language</folder>
-            <folder>models</folder>
-            <folder>services</folder>
-            <folder>sql</folder>
-            <folder>src</folder>
-            <folder>tables</folder>
-            <folder>views</folder>
-        </files>
-        <languages folder="administrator/language">
-            <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
-            <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
-            <language tag="es-ES">es-ES/es-ES.com_audatoria.ini</language>
-            <language tag="es-ES">es-ES/es-ES.com_audatoria.sys.ini</language>
-        </languages>
-    </administration>
-
-    <site>
-        <files folder="site">
-            <filename>audatoria.php</filename>
-            <filename>controller.php</filename>
-            <filename>index.html</filename>
-            <folder>controllers</folder>
-            <folder>models</folder>
-            <folder>services</folder>
-            <folder>src</folder>
-            <folder>views</folder>
-        </files>
-    </site>
-
-    <files folder="cli">
-        <filename>youtubeimport.php</filename> <filename>index.html</filename>
+    <scriptfile>script.php</scriptfile>
+    
+    <files>
+        <folder>services</folder>
+        <folder>src</folder>
+        <folder>language</folder>
+        <folder>tmpl</folder>
     </files>
 
-    <languages folder="language">
-        <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
-        <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
-        <language tag="es-ES">es-ES/es-ES.com_audatoria.ini</language>
-        <language tag="es-ES">es-ES/es-ES.com_audatoria.sys.ini</language>
-    </languages>
+    <administration>
+        <menu>COM_AUDATORIA</menu>
+        <files>
+            <folder>services</folder>
+            <folder>src</folder>
+            <folder>language</folder>
+        </files>
+    </administration>
 
-    <media destination="com_audatoria" folder="media">
-        <filename>index.html</filename>
-    </media>
+    <updateservers>
+        <server type="extension" name="Audatoria Updates">https://www.audatoria.com/updates.xml</server>
+    </updateservers>
 
-    <install>
-        <sql>
-            <file driver="mysql" charset="utf8mb4">administrator/sql/install.mysql.utf8.sql</file>
-        </sql>
-    </install>
-    <uninstall>
-        <sql>
-            <file driver="mysql" charset="utf8mb4">administrator/sql/uninstall.mysql.utf8.sql</file>
-        </sql>
-    </uninstall>
-
-    <config>
-        <fields name="params">
-            <fieldset name="default" label="COM_AUDATORIA_CONFIG_FIELDSET_LABEL">
-                <field name="Maps_api_key" type="text" label="COM_AUDATORIA_CONFIG_Maps_API_KEY_LABEL" description="COM_AUDATORIA_CONFIG_Maps_API_KEY_DESC" filter="string" size="50"/>
-                <field name="youtube_api_key" type="text" label="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_LABEL" description="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_DESC" filter="string" size="50" required="true" message="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_REQUIRED_MSG"/>
-                <field name="auto_publish_imported" type="radio" label="COM_AUDATORIA_CONFIG_AUTO_PUBLISH_IMPORTED_LABEL" description="COM_AUDATORIA_CONFIG_AUTO_PUBLISH_IMPORTED_DESC" default="1" class="btn-group btn-group-yesno">
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-                <field name="import_max_pages" type="number" label="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_LABEL" description="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_DESC" default="5" min="1" step="1"/>
-                <field name="import_videos_per_page" type="number" label="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_LABEL" description="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_DESC" default="20" min="1" max="50" step="1"/>
-            </fieldset>
-        </fields>
-    </config>
+    <target name="5.0.0">5.0.0</target>
 </extension>
