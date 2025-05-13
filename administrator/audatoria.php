@@ -1,94 +1,149 @@
-<?php
-/**
- * @package     Joomla.Administrator
- * @subpackage  com_audatoria
- *
- * @copyright   Copyright (C) 2025 Joel Salazar. Todos los derechos reservados.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
- */
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" method="upgrade" version="5.0">
+    <name>com_audatoria</name>
+    <author>Joel Salazar</author>
+    <creationDate>May 2025</creationDate>
+    <copyright>Copyright (C) 2025 Joel Salazar. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <authorEmail>salazarjoelo@gmail.com</authorEmail>
+    <authorUrl>https://github.com/salazarjoelo</authorUrl>
+    <version>1.0.6</version>
+    <description>COM_AUDATORIA_XML_DESCRIPTION</description>
 
-\defined('_JEXEC') or die;
+    <!-- Define the script file for installation/uninstallation -->
+    <scriptfile>script.php</scriptfile>
+    <php_minimum>8.1</php_minimum>
+    <joomla_minimum>5.0</joomla_minimum>
 
-// --- Autoloader de Composer (Opcional) ---
-// Solo intenta cargar si existe, sin lanzar error si no.
-$autoloader = __DIR__ . '/vendor/autoload.php';
-if (file_exists($autoloader)) {
-    require_once $autoloader;
-}
-// Si tus clases en src/ dependen estrictamente de este autoloader y no solo del de Joomla,
-// entonces la ausencia de este archivo podría causar problemas más adelante al intentar usar esas clases.
-// Por ahora, la instalación no fallará por la ausencia del archivo en sí.
+    <!-- Define site files -->
+    <files folder="site">
+        <filename>audatoria.php</filename>
+        <filename>composer.json</filename>
+        <filename>controller.php</filename>
+        <filename>index.html</filename>
+        <folder>controllers</folder>
+        <folder>language</folder>
+        <folder>media</folder>
+        <folder>models</folder>
+        <folder>services</folder>
+        <folder>src</folder>
+        <folder>views</folder>
+    </files>
 
-use Joomla\CMS\Application\AdministratorApplication;
-use Joomla\CMS\Dispatcher\DispatcherFactoryInterface;
-use Joomla\CMS\Extension\ComponentInterface;
-use Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
-use Joomla\CMS\Extension\Service\Provider\MVCFactory;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\DI\Container;
-use Joomla\DI\ServiceProviderInterface;
-use Salazarjoelo\Component\Audatoria\Administrator\Extension\AudatoriaComponent; // Asegúrate que este namespace y clase existan
+    <!-- Define language files for the site -->
+    <languages folder="site/language" client="site">
+        <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
+        <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
+        <language tag="es-ES">es-ES/es-ES.com_audatoria.ini</language>
+        <language tag="es-ES">es-ES/es-ES.com_audatoria.sys.ini</language>
+    </languages>
 
-$providerClass = 'Salazarjoelo\\Component\\Audatoria\\Administrator\\Service\\Provider'; // Asegúrate que este namespace y clase existan
+    <!-- Administration section -->
+    <administration>
+        <!-- Main menu and submenu -->
+        <menu link="index.php?option=com_audatoria&amp;view=timelines" img="class:stopwatch icon-audatoria">
+            COM_AUDATORIA_MENU_ADMIN
+        </menu>
+        <submenu>
+            <menuitem view="timelines" link="index.php?option=com_audatoria&amp;view=timelines" img="class:list icon-audatoria-timelines">
+                COM_AUDATORIA_SUBMENU_TIMELINES
+            </menuitem>
+            <menuitem view="items" link="index.php?option=com_audatoria&amp;view=items" img="class:file-alt icon-audatoria-item">
+                COM_AUDATORIA_SUBMENU_ITEMS
+            </menuitem>
+            <menuitem view="channels" link="index.php?option=com_audatoria&amp;view=channels" img="class:podcast icon-audatoria-channel">
+                COM_AUDATORIA_SUBMENU_CHANNELS
+            </menuitem>
+        </submenu>
 
-if (!class_exists($providerClass)) {
-    $providerFile = __DIR__ . '/services/provider.php';
-    $errorMessage = 'Error crítico en com_audatoria (Administrador): ';
-    if (file_exists($providerFile)){
-        $errorMessage .= 'El archivo del proveedor de servicios (services/provider.php) fue encontrado, ' .
-            'pero la clase "' . $providerClass . '" no está definida o no es localizable. ' .
-            'Verifica el namespace dentro de ese archivo. Debería ser "Salazarjoelo\\Component\\Audatoria\\Administrator\\Service".';
-    } else {
-        $errorMessage .= 'El archivo del proveedor de servicios (services/provider.php) no se encuentra en ' . $providerFile;
-    }
-    if (\Joomla\CMS\Factory::getApplication()->get('debug')) {
-        throw new \RuntimeException($errorMessage);
-    } else {
-        \Joomla\CMS\Log\Log::add($errorMessage, \Joomla\CMS\Log\Log::CRITICAL, 'com_audatoria');
-        if (\Joomla\CMS\Factory::getApplication()->isClient('administrator')) {
-             \Joomla\CMS\Factory::getApplication()->enqueueMessage($errorMessage, 'error');
-        } else {
-             echo 'Error al cargar el componente Audatoria.'; // Mensaje genérico para el sitio si esto se incluye por error
-        }
-        return;
-    }
-}
+        <!-- Administrator files -->
+        <files folder="administrator">
+            <filename>access.xml</filename>
+            <filename>audatoria.php</filename>
+            <filename>index.html</filename>
+            <folder>controllers</folder>
+            <folder>helper</folder>
+            <folder>language</folder>
+            <folder>media</folder>
+            <folder>models</folder>
+            <folder>services</folder>
+            <folder>sql</folder>
+            <folder>src</folder>
+            <folder>tables</folder>
+            <folder>views</folder>
+        </files>
 
-/**
- * Punto de entrada y proveedor de servicios para com_audatoria (Administrador)
- *
- * @since  1.0.0
- */
-return new class ($providerClass) implements ServiceProviderInterface {
-    private string $providerClassName;
+        <!-- Administrator language files -->
+        <languages folder="administrator/language" client="administrator">
+            <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
+            <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
+            <language tag="es-ES">es-ES/es-ES.com_audatoria.ini</language>
+            <language tag="es-ES">es-ES/es-ES.com_audatoria.sys.ini</language>
+        </languages>
+    </administration>
 
-    public function __construct(string $providerClassForAdmin)
-    {
-        $this->providerClassName = $providerClassForAdmin;
-    }
+    <!-- Define service providers -->
+    <serviceproviders>
+        <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Site" type="site">services/provider.php</serviceprovider>
+        <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Administrator" type="administrator">services/provider.php</serviceprovider>
+    </serviceproviders>
 
-    public function register(Container $container): void
-    {
-        $namespace = 'Salazarjoelo\\Component\\Audatoria\\Administrator';
+    <!-- SQL Installation and Uninstallation -->
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8mb4">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8mb4">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
 
-        $container->registerServiceProvider(new MVCFactory($namespace));
-        $container->registerServiceProvider(new ComponentDispatcherFactory($namespace));
-
-        if ($this->providerClassName && class_exists($this->providerClassName)) {
-            $container->registerServiceProvider(new $this->providerClassName());
-        }
-
-        $container->set(
-            ComponentInterface::class,
-            static function (Container $container) {
-                $component = new AudatoriaComponent(
-                    $container->get(DispatcherFactoryInterface::class),
-                    $container->get(MVCFactoryInterface::class)
-                );
-                // $component->setApplication($container->get(AdministratorApplication::class)); // MVCComponent lo maneja
-                return $component;
-            },
-            true
-        );
-    }
-};
+    <!-- Configuration fields -->
+    <config>
+        <fields name="params">
+            <fieldset name="component" label="COM_AUDATORIA_CONFIG_FIELDSET_LABEL">
+                <field name="Maps_API_KEY" type="text"
+                    label="COM_AUDATORIA_CONFIG_MAPS_API_KEY_LABEL"
+                    description="COM_AUDATORIA_CONFIG_MAPS_API_KEY_DESC"
+                    filter="string"
+                />
+                <field name="youtube_api_key" type="text"
+                    label="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_LABEL"
+                    description="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_DESC"
+                    filter="string"
+                />
+                <field name="auto_publish_imported" type="radio"
+                    label="COM_AUDATORIA_CONFIG_AUTO_PUBLISH_IMPORTED_LABEL"
+                    description="COM_AUDATORIA_CONFIG_AUTO_PUBLISH_IMPORTED_DESC"
+                    default="0" class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="import_max_pages" type="number"
+                    label="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_LABEL"
+                    description="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_DESC"
+                    default="5" step="1" min="1" max="20"
+                />
+                <field name="import_videos_per_page" type="number"
+                    label="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_LABEL"
+                    description="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_DESC"
+                    default="25" step="1" min="5" max="50"
+                />
+                <field name="PHP_PATH" type="text"
+                    label="COM_AUDATORIA_CONFIG_PHP_PATH_LABEL"
+                    description="COM_AUDATORIA_CONFIG_PHP_PATH_DESC"
+                    filter="string"
+                    hint="/usr/bin/php"
+                />
+            </fieldset>
+        </fields>
+    </config>
+</extension>
