@@ -1,0 +1,29 @@
+{
+    "name": "salazarjoelo/com_audatoria-site",
+    "description": "Site part of the Audatoria Joomla Component. Manages frontend display of timelines.",
+    "type": "joomla-component-site",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Joel Salazar",
+            "email": "salazarjoelo@gmail.com",
+            "homepage": "https://github.com/salazarjoelo"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.1"
+        // "some/frontend-library": "^1.0" // Ejemplo si necesitaras una biblioteca específica para el frontend
+    },
+    "autoload": {
+        "psr-4": {
+            "Salazarjoelo\\Component\\Audatoria\\Site\\": "src/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.1"
+        },
+        "vendor-dir": "vendor" 
+    }
+}
