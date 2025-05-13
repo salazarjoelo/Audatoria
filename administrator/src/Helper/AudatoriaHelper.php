@@ -1,6 +1,5 @@
 <?php
-// Ubicación: administrator/src/Helper/AudatoriaHelper.php (o administrator/helpers/AudatoriaHelper.php con namespace ajustado)
-namespace Salazarjoelo\Component\Audatoria\Administrator\src\Helper; // NAMESPACE CORREGIDO
+namespace Salazarjoelo\Component\Audatoria\Administrator\Helper;
 
 \defined('_JEXEC') or die;
 
