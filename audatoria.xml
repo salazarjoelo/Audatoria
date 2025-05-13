@@ -10,10 +10,12 @@
     <version>1.0.6</version>
     <description>COM_AUDATORIA_XML_DESCRIPTION</description>
 
-    <!-- Define the script file for installation/uninstallation -->
-    <scriptfile>script.php</scriptfile>
+    <!-- Minimum requirements -->
     <php_minimum>8.1</php_minimum>
     <joomla_minimum>5.0</joomla_minimum>
+
+    <!-- Script file for installation/uninstallation -->
+    <scriptfile>script.php</scriptfile>
 
     <!-- Define site files -->
     <files folder="site">
@@ -30,7 +32,7 @@
         <folder>views</folder>
     </files>
 
-    <!-- Define language files for the site -->
+    <!-- Define site language files -->
     <languages folder="site/language" client="site">
         <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
         <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
