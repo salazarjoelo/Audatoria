@@ -62,7 +62,6 @@
             <filename>audatoria.php</filename>
             <filename>index.html</filename>
             <folder>controllers</folder>
-            <folder>Helper</folder>
             <folder>language</folder>
             <folder>media</folder>
             <folder>models</folder>
