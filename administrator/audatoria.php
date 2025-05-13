@@ -1,149 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
-<extension type="component" method="upgrade" version="5.0">
-    <name>com_audatoria</name>
-    <author>Joel Salazar</author>
-    <creationDate>May 2025</creationDate>
-    <copyright>Copyright (C) 2025 Joel Salazar. All rights reserved.</copyright>
-    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-    <authorEmail>salazarjoelo@gmail.com</authorEmail>
-    <authorUrl>https://github.com/salazarjoelo</authorUrl>
-    <version>1.0.6</version>
-    <description>COM_AUDATORIA_XML_DESCRIPTION</description>
+<?php
+/**
+ * @package     Joomla.Administrator
+ * @subpackage  com_audatoria
+ * @copyright   Copyright (C) 2025 Joel Salazar. All rights reserved.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
 
-    <!-- Define the script file for installation/uninstallation -->
-    <scriptfile>script.php</scriptfile>
-    <php_minimum>8.1</php_minimum>
-    <joomla_minimum>5.0</joomla_minimum>
+// No direct access to this file
+defined('_JEXEC') or die('Restricted access');
 
-    <!-- Define site files -->
-    <files folder="site">
-        <filename>audatoria.php</filename>
-        <filename>composer.json</filename>
-        <filename>controller.php</filename>
-        <filename>index.html</filename>
-        <folder>controllers</folder>
-        <folder>language</folder>
-        <folder>media</folder>
-        <folder>models</folder>
-        <folder>services</folder>
-        <folder>src</folder>
-        <folder>views</folder>
-    </files>
+// Autoload dependencies (if any composer dependencies exist)
+if (file_exists(JPATH_COMPONENT_ADMINISTRATOR . '/vendor/autoload.php')) {
+    require_once JPATH_COMPONENT_ADMINISTRATOR . '/vendor/autoload.php';
+}
 
-    <!-- Define language files for the site -->
-    <languages folder="site/language" client="site">
-        <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
-        <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
-        <language tag="es-ES">es-ES/es-ES.com_audatoria.ini</language>
-        <language tag="es-ES">es-ES/es-ES.com_audatoria.sys.ini</language>
-    </languages>
+// Include dependencies
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Language\Text;
 
-    <!-- Administration section -->
-    <administration>
-        <!-- Main menu and submenu -->
-        <menu link="index.php?option=com_audatoria&amp;view=timelines" img="class:stopwatch icon-audatoria">
-            COM_AUDATORIA_MENU_ADMIN
-        </menu>
-        <submenu>
-            <menuitem view="timelines" link="index.php?option=com_audatoria&amp;view=timelines" img="class:list icon-audatoria-timelines">
-                COM_AUDATORIA_SUBMENU_TIMELINES
-            </menuitem>
-            <menuitem view="items" link="index.php?option=com_audatoria&amp;view=items" img="class:file-alt icon-audatoria-item">
-                COM_AUDATORIA_SUBMENU_ITEMS
-            </menuitem>
-            <menuitem view="channels" link="index.php?option=com_audatoria&amp;view=channels" img="class:podcast icon-audatoria-channel">
-                COM_AUDATORIA_SUBMENU_CHANNELS
-            </menuitem>
-        </submenu>
+// Execute the task
+try {
+    // Load the language file for the component
+    $lang = Factory::getLanguage();
+    $lang->load('com_audatoria', JPATH_ADMINISTRATOR);
 
-        <!-- Administrator files -->
-        <files folder="administrator">
-            <filename>access.xml</filename>
-            <filename>audatoria.php</filename>
-            <filename>index.html</filename>
-            <folder>controllers</folder>
-            <folder>helper</folder>
-            <folder>language</folder>
-            <folder>media</folder>
-            <folder>models</folder>
-            <folder>services</folder>
-            <folder>sql</folder>
-            <folder>src</folder>
-            <folder>tables</folder>
-            <folder>views</folder>
-        </files>
+    // Get an instance of the controller
+    $controller = BaseController::getInstance('Audatoria');
 
-        <!-- Administrator language files -->
-        <languages folder="administrator/language" client="administrator">
-            <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
-            <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
-            <language tag="es-ES">es-ES/es-ES.com_audatoria.ini</language>
-            <language tag="es-ES">es-ES/es-ES.com_audatoria.sys.ini</language>
-        </languages>
-    </administration>
+    // Perform the requested task
+    $input = Factory::getApplication()->input;
+    $task = $input->getCmd('task', '');
 
-    <!-- Define service providers -->
-    <serviceproviders>
-        <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Site" type="site">services/provider.php</serviceprovider>
-        <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Administrator" type="administrator">services/provider.php</serviceprovider>
-    </serviceproviders>
+    // Log the task being executed (for debugging purposes)
+    Factory::getApplication()->enqueueMessage(Text::sprintf('COM_AUDATORIA_LOG_TASK', $task), 'message');
 
-    <!-- SQL Installation and Uninstallation -->
-    <install>
-        <sql>
-            <file driver="mysql" charset="utf8mb4">sql/install.mysql.utf8.sql</file>
-        </sql>
-    </install>
-    <uninstall>
-        <sql>
-            <file driver="mysql" charset="utf8mb4">sql/uninstall.mysql.utf8.sql</file>
-        </sql>
-    </uninstall>
-    <update>
-        <schemas>
-            <schemapath type="mysql">sql/updates/mysql</schemapath>
-        </schemas>
-    </update>
+    $controller->execute($task);
 
-    <!-- Configuration fields -->
-    <config>
-        <fields name="params">
-            <fieldset name="component" label="COM_AUDATORIA_CONFIG_FIELDSET_LABEL">
-                <field name="Maps_API_KEY" type="text"
-                    label="COM_AUDATORIA_CONFIG_MAPS_API_KEY_LABEL"
-                    description="COM_AUDATORIA_CONFIG_MAPS_API_KEY_DESC"
-                    filter="string"
-                />
-                <field name="youtube_api_key" type="text"
-                    label="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_LABEL"
-                    description="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_DESC"
-                    filter="string"
-                />
-                <field name="auto_publish_imported" type="radio"
-                    label="COM_AUDATORIA_CONFIG_AUTO_PUBLISH_IMPORTED_LABEL"
-                    description="COM_AUDATORIA_CONFIG_AUTO_PUBLISH_IMPORTED_DESC"
-                    default="0" class="btn-group btn-group-yesno"
-                >
-                    <option value="1">JYES</option>
-                    <option value="0">JNO</option>
-                </field>
-                <field name="import_max_pages" type="number"
-                    label="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_LABEL"
-                    description="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_DESC"
-                    default="5" step="1" min="1" max="20"
-                />
-                <field name="import_videos_per_page" type="number"
-                    label="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_LABEL"
-                    description="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_DESC"
-                    default="25" step="1" min="5" max="50"
-                />
-                <field name="PHP_PATH" type="text"
-                    label="COM_AUDATORIA_CONFIG_PHP_PATH_LABEL"
-                    description="COM_AUDATORIA_CONFIG_PHP_PATH_DESC"
-                    filter="string"
-                    hint="/usr/bin/php"
-                />
-            </fieldset>
-        </fields>
-    </config>
-</extension>
+    // Redirect if set by the controller
+    $controller->redirect();
+} catch (Exception $e) {
+    // Handle errors gracefully
+    Factory::getApplication()->enqueueMessage($e->getMessage(), 'error');
+    Factory::getApplication()->redirect('index.php?option=com_audatoria');
+}
