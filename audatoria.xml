@@ -12,7 +12,7 @@
 
     <scriptfile>script.php</scriptfile>
     <php_minimum>8.1</php_minimum>
-    <joomla_minimum>5.0</joomla_minimum>
+    <joomla_minimum>4.0</joomla_minimum>
 
     <files folder="site">
         <filename>audatoria.php</filename>
@@ -44,13 +44,11 @@
         <files folder="administrator">
             <filename>access.xml</filename>
             <filename>audatoria.php</filename>
-            <filename>config.xml</filename>
-            <filename>composer.json</filename>
             <filename>index.html</filename>
             <folder>controllers</folder>
-            <folder>helpers</folder>
+			<folder>helper</folder>
             <folder>language</folder>
-            <folder>layouts</folder>
+            <folder>media</folder>
             <folder>models</folder>
             <folder>services</folder>
             <folder>sql</folder>
