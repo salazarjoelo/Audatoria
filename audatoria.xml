@@ -7,17 +7,22 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>salazarjoelo@gmail.com</authorEmail>
     <authorUrl>https://github.com/salazarjoelo</authorUrl>
-    <version>1.0.6</version> <description>COM_AUDATORIA_XML_DESCRIPTION</description>
+    <version>1.0.6</version>
+    <description>COM_AUDATORIA_XML_DESCRIPTION</description>
 
-    <scriptfile>script.php</scriptfile> <php_minimum>8.1</php_minimum>
+    <scriptfile>script.php</scriptfile>
+    <php_minimum>8.1</php_minimum>
     <joomla_minimum>5.0</joomla_minimum>
 
     <files folder="site">
         <filename>audatoria.php</filename>
-        <filename>composer.json</filename> <filename>controller.php</filename> <filename>index.html</filename>
+        <filename>composer.json</filename>
+        <filename>controller.php</filename>
+        <filename>index.html</filename>
         <folder>controllers</folder>
         <folder>language</folder>
-        <folder>layouts</folder> <folder>media</folder>   <folder>models</folder>
+        <folder>media</folder>
+        <folder>models</folder>
         <folder>services</folder>
         <folder>src</folder>
         <folder>views</folder>
@@ -36,12 +41,18 @@
             <menuitem view="channels" link="index.php?option=com_audatoria&amp;view=channels" img="class:podcast icon-audatoria-channel">COM_AUDATORIA_SUBMENU_CHANNELS</menuitem>
         </submenu>
 
-        <files folder="administrator"> <filename>access.xml</filename>
+        <files folder="administrator">
+            <filename>access.xml</filename>
             <filename>audatoria.php</filename>
-            <filename>config.xml</filename> <filename>composer.json</filename> <filename>index.html</filename>
+            <filename>config.xml</filename>
+            <filename>composer.json</filename>
+            <filename>index.html</filename>
             <folder>controllers</folder>
-            <folder>helpers</folder> <folder>language</folder>
-            <folder>layouts</folder> <folder>models</folder> <folder>services</folder>
+            <folder>helpers</folder>
+            <folder>language</folder>
+            <folder>layouts</folder>
+            <folder>models</folder>
+            <folder>services</folder>
             <folder>sql</folder>
             <folder>src</folder>
             <folder>tables</folder>
@@ -107,7 +118,7 @@
                     description="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_DESC"
                     default="25" step="1" min="5" max="50"
                 />
-                <field name="PHP_PATH" type="text"
+                 <field name="PHP_PATH" type="text"
                     label="COM_AUDATORIA_CONFIG_PHP_PATH_LABEL"
                     description="COM_AUDATORIA_CONFIG_PHP_PATH_DESC"
                     filter="string"
