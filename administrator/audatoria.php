@@ -9,11 +9,15 @@
 
 \defined('_JEXEC') or die;
 
-// Autoloader de Composer (opcional si no tienes dependencias de terceros específicas del backend)
+// --- Autoloader de Composer (Opcional) ---
+// Solo intenta cargar si existe, sin lanzar error si no.
 $autoloader = __DIR__ . '/vendor/autoload.php';
 if (file_exists($autoloader)) {
-	require_once $autoloader;
+    require_once $autoloader;
 }
+// Si tus clases en src/ dependen estrictamente de este autoloader y no solo del de Joomla,
+// entonces la ausencia de este archivo podría causar problemas más adelante al intentar usar esas clases.
+// Por ahora, la instalación no fallará por la ausencia del archivo en sí.
 
 use Joomla\CMS\Application\AdministratorApplication;
 use Joomla\CMS\Dispatcher\DispatcherFactoryInterface;
@@ -23,9 +27,9 @@ use Joomla\CMS\Extension\Service\Provider\MVCFactory;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
-use Salazarjoelo\Component\Audatoria\Administrator\Extension\AudatoriaComponent;
+use Salazarjoelo\Component\Audatoria\Administrator\Extension\AudatoriaComponent; // Asegúrate que este namespace y clase existan
 
-$providerClass = 'Salazarjoelo\\Component\\Audatoria\\Administrator\\Service\\Provider';
+$providerClass = 'Salazarjoelo\\Component\\Audatoria\\Administrator\\Service\\Provider'; // Asegúrate que este namespace y clase existan
 
 if (!class_exists($providerClass)) {
     $providerFile = __DIR__ . '/services/provider.php';
@@ -37,14 +41,15 @@ if (!class_exists($providerClass)) {
     } else {
         $errorMessage .= 'El archivo del proveedor de servicios (services/provider.php) no se encuentra en ' . $providerFile;
     }
-    // En producción, es mejor solo loguear y mostrar un error genérico.
-    // Durante el desarrollo, una excepción puede ser útil.
     if (\Joomla\CMS\Factory::getApplication()->get('debug')) {
         throw new \RuntimeException($errorMessage);
     } else {
         \Joomla\CMS\Log\Log::add($errorMessage, \Joomla\CMS\Log\Log::CRITICAL, 'com_audatoria');
-        // Podrías mostrar un error genérico aquí si el componente no puede arrancar.
-        echo 'Error al cargar el componente Audatoria.';
+        if (\Joomla\CMS\Factory::getApplication()->isClient('administrator')) {
+             \Joomla\CMS\Factory::getApplication()->enqueueMessage($errorMessage, 'error');
+        } else {
+             echo 'Error al cargar el componente Audatoria.'; // Mensaje genérico para el sitio si esto se incluye por error
+        }
         return;
     }
 }
@@ -55,37 +60,35 @@ if (!class_exists($providerClass)) {
  * @since  1.0.0
  */
 return new class ($providerClass) implements ServiceProviderInterface {
-	private string $providerClassName;
+    private string $providerClassName;
 
-	public function __construct(string $providerClassForAdmin)
-	{
-		$this->providerClassName = $providerClassForAdmin;
-	}
+    public function __construct(string $providerClassForAdmin)
+    {
+        $this->providerClassName = $providerClassForAdmin;
+    }
 
-	public function register(Container $container): void
-	{
+    public function register(Container $container): void
+    {
         $namespace = 'Salazarjoelo\\Component\\Audatoria\\Administrator';
 
-		$container->registerServiceProvider(new MVCFactory($namespace));
-		$container->registerServiceProvider(new ComponentDispatcherFactory($namespace));
+        $container->registerServiceProvider(new MVCFactory($namespace));
+        $container->registerServiceProvider(new ComponentDispatcherFactory($namespace));
 
-		if ($this->providerClassName && class_exists($this->providerClassName)) {
-			$container->registerServiceProvider(new $this->providerClassName());
-		}
+        if ($this->providerClassName && class_exists($this->providerClassName)) {
+            $container->registerServiceProvider(new $this->providerClassName());
+        }
 
-		$container->set(
-			ComponentInterface::class,
-			static function (Container $container) {
-				$component = new AudatoriaComponent(
+        $container->set(
+            ComponentInterface::class,
+            static function (Container $container) {
+                $component = new AudatoriaComponent(
                     $container->get(DispatcherFactoryInterface::class),
                     $container->get(MVCFactoryInterface::class)
                 );
-                // MVCComponent usualmente obtiene la aplicación del contenedor si es necesario.
-                // Si necesitas pasarla explícitamente:
-                // $component->setApplication($container->get(AdministratorApplication::class));
-				return $component;
-			},
-            true // Shared
-		);
-	}
+                // $component->setApplication($container->get(AdministratorApplication::class)); // MVCComponent lo maneja
+                return $component;
+            },
+            true
+        );
+    }
 };

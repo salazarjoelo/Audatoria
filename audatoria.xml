@@ -7,7 +7,7 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>salazarjoelo@gmail.com</authorEmail>
     <authorUrl>https://github.com/salazarjoelo</authorUrl>
-    <version>1.0.2</version> <description>COM_AUDATORIA_XML_DESCRIPTION</description>
+    <version>1.0.4</version> <description>COM_AUDATORIA_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
     <php_minimum>8.1</php_minimum>
@@ -15,15 +15,13 @@
 
     <files folder="site">
         <filename>audatoria.php</filename>
-        <filename>composer.json</filename>
-        <filename>composer.lock</filename>
-        <folder>controllers</folder>
+        <filename>composer.json</filename> <folder>controllers</folder>
         <folder>language</folder>
+        <folder>layouts</folder>
         <folder>models</folder>
         <folder>services</folder>
         <folder>src</folder>
         <folder>views</folder>
-        <folder>media</folder>
         </files>
     <languages folder="site/language" client="site">
         <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
@@ -35,20 +33,18 @@
         </media>
 
     <administration>
-        <menu img="class:stopwatch icon-audatoria" link="index.php?option=com_audatoria&amp;view=timelines">COM_AUDATORIA_MENU_ADMIN</menu>
+        <menu link="index.php?option=com_audatoria&amp;view=timelines" img="class:stopwatch icon-audatoria">COM_AUDATORIA_MENU_ADMIN</menu>
         <submenu>
             <menuitem view="timelines" link="index.php?option=com_audatoria&amp;view=timelines" img="class:list icon-audatoria-timelines">COM_AUDATORIA_SUBMENU_TIMELINES</menuitem>
             <menuitem view="items" link="index.php?option=com_audatoria&amp;view=items" img="class:file-alt icon-audatoria-item">COM_AUDATORIA_SUBMENU_ITEMS</menuitem>
-            <menuitem view="channels" link="index.php?option=com_audatoria&amp;view=channels" img="class:youtube icon-audatoria-channel">COM_AUDATORIA_SUBMENU_CHANNELS</menuitem>
+            <menuitem view="channels" link="index.php?option=com_audatoria&amp;view=channels" img="class:podcast icon-audatoria-channel">COM_AUDATORIA_SUBMENU_CHANNELS</menuitem>
             </submenu>
 
         <files folder="administrator">
             <filename>access.xml</filename>
             <filename>audatoria.php</filename>
             <filename>config.xml</filename>
-            <filename>composer.json</filename>
-            <filename>composer.lock</filename>
-            <folder>controllers</folder>
+            <filename>composer.json</filename> <folder>controllers</folder>
             <folder>forms</folder>
             <folder>helpers</folder>
             <folder>language</folder>
@@ -93,8 +89,8 @@
         <fields name="params">
             <fieldset name="component" label="COM_AUDATORIA_CONFIG_FIELDSET_LABEL">
                 <field name="Maps_API_KEY" type="text"
-                    label="COM_AUDATORIA_CONFIG_Maps_API_KEY_LABEL"
-                    description="COM_AUDATORIA_CONFIG_Maps_API_KEY_DESC"
+                    label="COM_AUDATORIA_CONFIG_MAPS_API_KEY_LABEL"
+                    description="COM_AUDATORIA_CONFIG_MAPS_API_KEY_DESC"
                     filter="string"
                 />
                 <field name="youtube_api_key" type="text"
@@ -110,12 +106,22 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="import_max_pages" type="number" label="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_LABEL"
+                <field name="import_max_pages" type="number"
+                    label="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_LABEL"
                     description="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_DESC"
-                    default="5" step="1" min="1" max="20" />
-                <field name="import_videos_per_page" type="number" label="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_LABEL"
+                    default="5" step="1" min="1" max="20"
+                />
+                <field name="import_videos_per_page" type="number"
+                    label="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_LABEL"
                     description="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_DESC"
-                    default="25" step="1" min="5" max="50" />
+                    default="25" step="1" min="5" max="50"
+                />
+                <field name="PHP_PATH" type="text"
+                    label="COM_AUDATORIA_CONFIG_PHP_PATH_LABEL"
+                    description="COM_AUDATORIA_CONFIG_PHP_PATH_DESC"
+                    filter="string"
+                    hint="/usr/bin/php"
+                />
             </fieldset>
         </fields>
     </config>

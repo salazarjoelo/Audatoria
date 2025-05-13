@@ -1,66 +1,88 @@
 <?php
-// Ubicación: site/audatoria.php
+/**
+ * @package     Joomla.Site
+ * @subpackage  com_audatoria
+ *
+ * @copyright   Copyright (C) 2025 Joel Salazar. Todos los derechos reservados.
+ * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ */
 \defined('_JEXEC') or die;
 
+// --- Autoloader de Composer (Opcional) ---
+$autoloader = __DIR__ . '/vendor/autoload.php';
+if (file_exists($autoloader)) {
+    require_once $autoloader;
+}
+// No lanzar error si no existe, para permitir la instalación sin la carpeta vendor.
+
+use Joomla\CMS\Application\SiteApplication; // Específico para el sitio
+use Joomla\CMS\Dispatcher\DispatcherFactoryInterface;
 use Joomla\CMS\Extension\ComponentInterface;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Log\Log;
+use Joomla\CMS\Extension\Service\Provider\ComponentDispatcherFactory;
+use Joomla\CMS\Extension\Service\Provider\MVCFactory;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\DI\Container;
+use Joomla\DI\ServiceProviderInterface;
+use Salazarjoelo\Component\Audatoria\Site\Extension\AudatoriaComponent; // Asegúrate que este namespace y clase existan
 
-/**
- * Punto de entrada principal para com_audatoria en el frontend.
- */
+$providerClass = 'Salazarjoelo\\Component\\Audatoria\\Site\\Service\\Provider'; // Asegúrate que este namespace y clase existan
 
-try {
-    // Obtener el contenedor de servicios
-    $container = Factory::getContainer();
-
-    // Obtener la instancia del componente del sitio (usará site/services/provider.php)
-    /** @var ComponentInterface $component */
-    $component = $container->get(ComponentInterface::class);
-
-    // Despachar la solicitud al controlador/vista apropiado del sitio
-    $component->dispatch();
-
-} catch (\Throwable $e) {
-    // Capturar cualquier error durante la carga o despacho del componente del sitio
-
-    Log::add(
-        sprintf(
-            "Error Crítico al Despachar com_audatoria (Sitio): %s en %s:%d\n%s",
-            $e->getMessage(),
-            $e->getFile(),
-            $e->getLine(),
-            $e->getTraceAsString()
-        ),
-        Log::CRITICAL,
-        'com_audatoria_dispatch_error_site'
-    );
-
-    // Mostrar un mensaje de error apropiado
-    $app = Factory::getApplication();
-    if ($app->get('debug') && $app->getIdentity()->authorise('core.manage', 'com_installer')) {
-        // Mensaje detallado para administradores en modo debug
-        $error_message = '<strong>Error Crítico com_audatoria (Sitio):</strong><br>'
-            . 'Mensaje: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . '<br>'
-            . 'Archivo: ' . htmlspecialchars($e->getFile(), ENT_QUOTES, 'UTF-8') . ' (Línea: ' . $e->getLine() . ')<br>';
-        // Descomentar con precaución para ver traza:
-        // $error_message .= '<pre>' . htmlspecialchars($e->getTraceAsString(), ENT_QUOTES, 'UTF-8') . '</pre>';
-        // Mostrar el error directamente en el sitio puede romper el layout.
-        // Considera solo loguearlo o mostrar un mensaje genérico.
-        echo '<div class="alert alert-danger">' . $error_message . '</div>';
-        // O usar JError (aunque es más antiguo)
-        // \JError::raiseError(500, $error_message);
-
+if (!class_exists($providerClass)) {
+    $providerFile = __DIR__ . '/services/provider.php';
+    $errorMessage = 'Error crítico en com_audatoria (Sitio): ';
+    if (file_exists($providerFile)){
+        $errorMessage .= 'El archivo del proveedor de servicios (services/provider.php) fue encontrado, ' .
+            'pero la clase "' . $providerClass . '" no está definida o no es localizable. ' .
+            'Verifica el namespace dentro de ese archivo. Debería ser "Salazarjoelo\\Component\\Audatoria\\Site\\Service".';
     } else {
-        // Mensaje genérico. Puedes mostrarlo en la plantilla si lo capturas.
-        // O redirigir a una página de error.
-        // Por simplicidad, podríamos no mostrar nada o un mensaje simple.
-        // echo '<div class="alert alert-danger">'.Text::_('COM_AUDATORIA_ERROR_UNEXPECTED_SITE').'</div>';
-        // O simplemente loguearlo y mostrar una página en blanco o redirigir.
-        // header("HTTP/1.1 500 Internal Server Error"); // Opcional
-        echo "Se produjo un error al cargar el contenido."; // Mensaje muy genérico
+        $errorMessage .= 'El archivo del proveedor de servicios (services/provider.php) no se encuentra en ' . $providerFile;
     }
 
-    // Detener la ejecución normal si ocurre un error crítico aquí
-    return; // O exit;
+    if (\Joomla\CMS\Factory::getApplication()->get('debug')) {
+        throw new \RuntimeException($errorMessage);
+    } else {
+        \Joomla\CMS\Log\Log::add($errorMessage, \Joomla\CMS\Log\Log::CRITICAL, 'com_audatoria');
+        // Para el frontend, podrías simplemente mostrar un mensaje de error genérico o nada.
+        echo 'Error al cargar el contenido de Audatoria.';
+        return;
+    }
 }
+
+/**
+ * Punto de entrada y proveedor de servicios para com_audatoria (Sitio)
+ *
+ * @since  1.0.0
+ */
+return new class ($providerClass) implements ServiceProviderInterface {
+    private string $providerClassName;
+
+    public function __construct(string $providerClassForSite)
+    {
+        $this->providerClassName = $providerClassForSite;
+    }
+
+    public function register(Container $container): void
+    {
+        $namespace = 'Salazarjoelo\\Component\\Audatoria\\Site';
+
+        $container->registerServiceProvider(new MVCFactory($namespace));
+        $container->registerServiceProvider(new ComponentDispatcherFactory($namespace));
+
+        if ($this->providerClassName && class_exists($this->providerClassName)) {
+            $container->registerServiceProvider(new $this->providerClassName());
+        }
+
+        $container->set(
+            ComponentInterface::class,
+            static function (Container $container) {
+                $component = new AudatoriaComponent(
+                    $container->get(DispatcherFactoryInterface::class),
+                    $container->get(MVCFactoryInterface::class)
+                );
+                // $component->setApplication($container->get(SiteApplication::class)); // MVCComponent lo maneja
+                return $component;
+            },
+            true
+        );
+    }
+};
