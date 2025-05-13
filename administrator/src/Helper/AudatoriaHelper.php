@@ -1,5 +1,5 @@
 <?php
-namespace Salazarjoelo\Component\Audatoria\Administrator\Helper;
+namespace Salazarjoelo\Component\Audatoria;
 
 \defined('_JEXEC') or die;
 

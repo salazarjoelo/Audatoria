@@ -8,7 +8,7 @@ use Joomla\CMS\MVC\View\FormView as BaseFormView; // CAMBIADO a FormView
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Salazarjoelo\Component\Audatoria\Administrator\Helper\AudatoriaHelper; // Namespace del Helper CORREGIDO
+use Salazarjoelo\Component\Audatoria\AudatoriaHelper; // Namespace del Helper CORREGIDO
 
 class ChannelView extends BaseFormView // Nombre de clase y herencia CORREGIDOS
 {

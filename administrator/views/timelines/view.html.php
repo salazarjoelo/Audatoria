@@ -9,7 +9,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper; // Para renderizar layouts como el sidebar
 use Joomla\CMS\Factory;
-use Salazarjoelo\Component\Audatoria\Administrator\Helper\AudatoriaHelper; // Namespace del Helper CORREGIDO
+use Salazarjoelo\Component\Audatoria\AudatoriaHelper; // Namespace del Helper CORREGIDO
 
 class TimelinesView extends BaseListView
 {
