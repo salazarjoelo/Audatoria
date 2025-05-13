@@ -1,51 +1,59 @@
 <?php
 // Ubicación: administrator/tables/item.php
-namespace Joomla\Component\Audatoria\Administrator\Table;
+namespace Salazarjoelo\Component\Audatoria\Administrator\Table; // NAMESPACE CORREGIDO
 
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\CMS\Language\Text; // Para Text::_()
+use Joomla\CMS\Factory; // Para Factory::getDate()
 
-class ItemTable extends Table // Renombrar a ItemTable
+class ItemTable extends Table
 {
-    /**
-     * Constructor
-     *
-     * @param   DatabaseDriver  &$db  A database connector object
-     */
     public function __construct(DatabaseDriver &$db)
     {
         parent::__construct('#__audatoria_items', 'id', $db);
-        // $this->setSupportsContentHistory(true);
+        $this->setColumnAlias('published', 'state');
     }
-
-    // Puedes añadir aquí validaciones específicas (método check())
-    // o lógica de almacenamiento (método store()) si es necesario.
-    // Por ejemplo, asegurar que start_date sea anterior a end_date, etc.
 
     public function check()
     {
-        // Ejemplo de validación: el título no puede estar vacío si no es una importación de YouTube (o algún otro criterio)
-        if (empty($this->title) && $this->media_type !== 'youtube') { // Asumiendo que las importaciones pueden no tener título inicialmente
-            $this->setError(\Joomla\CMS\Language\Text::_('COM_AUDATORIA_ERROR_ITEM_TITLE_REQUIRED'));
+        if (empty($this->title)) { 
+            $this->setError(Text::_('COM_AUDATORIA_ERROR_ITEM_TITLE_REQUIRED'));
             return false;
         }
 
-        if (!empty($this->start_date) && !empty($this->end_date)) {
-            $startDate = new \Joomla\CMS\Date\Date($this->start_date);
-            $endDate   = new \Joomla\CMS\Date\Date($this->end_date);
-            if ($endDate < $startDate) {
-                $this->setError(\Joomla\CMS\Language\Text::_('COM_AUDATORIA_ERROR_END_DATE_BEFORE_START_DATE'));
-                return false;
-            }
+        if (!empty($this->start_date) && $this->start_date != $this->_db->getNullDate()) {
+             try {
+                 $startDate = Factory::getDate($this->start_date);
+                 if (!empty($this->end_date) && $this->end_date != $this->_db->getNullDate()) {
+                     $endDate   = Factory::getDate($this->end_date);
+                     if ($endDate < $startDate) {
+                         $this->setError(Text::_('COM_AUDATORIA_ERROR_END_DATE_BEFORE_START_DATE'));
+                         return false;
+                     }
+                 }
+             } catch (\Exception $e) {
+                 $this->setError(Text::sprintf('JLIB_DATABASE_ERROR_INVALID_DATE_FIELD', 'start_date/end_date'));
+                 return false;
+             }
+        } elseif (empty($this->start_date) || $this->start_date == $this->_db->getNullDate()){
+             // Start date is required by TimelineJS in the frontend
+             $this->setError(Text::_('COM_AUDATORIA_FIELD_START_DATE') . ' ' . Text::_('JLIB_FORM_VALIDATE_FIELD_REQUIRED'));
+             return false;
         }
         
-        // Asegurar que timeline_id es válido
         if (empty($this->timeline_id) || (int) $this->timeline_id <= 0) {
-            $this->setError(\Joomla\CMS\Language\Text::_('COM_AUDATORIA_ERROR_ITEM_TIMELINE_ID_REQUIRED'));
+            $this->setError(Text::_('COM_AUDATORIA_ERROR_ITEM_TIMELINE_ID_REQUIRED'));
             return false;
         }
+        
+        // Check asset_id (manejo básico, JTableAsset se encarga de la creación compleja)
+        if (empty($this->asset_id)) {
+             $this->asset_id = 0; // O manejarlo según las reglas de JTableAsset
+        }
+
 
         return parent::check();
     }

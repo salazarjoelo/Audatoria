@@ -1,6 +1,6 @@
 <?php
 // Ubicación: administrator/controllers/item.php
-namespace Joomla\Component\Audatoria\Administrator\Controller;
+namespace Salazarjoelo\Component\Audatoria\Administrator\Controller; // NAMESPACE CORREGIDO
 
 \defined('_JEXEC') or die;
 
@@ -23,7 +23,7 @@ class ItemController extends FormController
     {
         $this->checkToken();
         $app   = Factory::getApplication();
-        $model = $this->getModel('Item');
+        $model = $this->getModel('Item', 'Salazarjoelo\Component\Audatoria\Administrator\Model'); // Namespace del modelo
         $table = $model->getTable();
         $data  = $this->input->post->get('jform', [], 'array');
         $form  = $model->getForm($data, false);
@@ -73,7 +73,7 @@ class ItemController extends FormController
             case 'save2new':
                 $this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=' . $this->view_item . '&layout=edit', false));
                 break;
-            default:
+            default: // save
                 $this->setRedirect(Route::_('index.php?option=' . $this->option . '&view=' . $this->view_list . $this->getRedirectToListAppend(), false));
                 break;
         }

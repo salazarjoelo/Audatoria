@@ -1,6 +1,6 @@
 <?php
 // Ubicación: administrator/views/items/view.html.php
-namespace Joomla\Component\Audatoria\Administrator\View\Items;
+namespace Salazarjoelo\Component\Audatoria\Administrator\View\Items; // NAMESPACE CORREGIDO
 
 \defined('_JEXEC') or die;
 
@@ -9,7 +9,7 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Factory;
-use Joomla\Component\Audatoria\Administrator\Helper\AudatoriaHelper;
+use Salazarjoelo\Component\Audatoria\Administrator\Helper\AudatoriaHelper; // Namespace del Helper CORREGIDO
 
 class ItemsView extends BaseListView
 {
@@ -18,7 +18,6 @@ class ItemsView extends BaseListView
     protected $state;
     protected $filterForm;
     protected $activeFilters;
-    protected $sidebar;
     protected $canDo;
 
     public function display($tpl = null): void
@@ -28,20 +27,26 @@ class ItemsView extends BaseListView
         $this->state         = $this->get('State');
         $this->filterForm    = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
-        $this->canDo         = AudatoriaHelper::getActions('component'); // O 'item' si los permisos son más granulares para la lista
+        $this->canDo         = AudatoriaHelper::getActions('com_audatoria');
 
         if (count($errors = $this->get('Errors'))) {
+            \Joomla\CMS\Log\Log::add(implode("\n", $errors), \Joomla\CMS\Log\Log::ERROR, 'com_audatoria');
             throw new \Exception(implode("\n", $errors), 500);
         }
 
         $this->addToolbar();
-        $this->sidebar = LayoutHelper::render('joomla.sidebars.submenu', ['items' => AudatoriaHelper::getSidebarItems('items')]);
         
-        // Cargar el campo de filtro de timeline para las Search Tools
-        if ($this->filterForm) {
-            $this->filterForm->prepare('filter_timeline_id', 'SELECT id AS value, title AS text FROM #__audatoria_timelines WHERE state = 1 ORDER BY title ASC');
+        // Para el filtro de timeline en Search Tools
+        // Esto asume que 'filter_timeline_id' es un campo en tu filter_items.xml de tipo 'sql'
+        // y el modelo 'ItemsModel' (lista) lo maneja en populateState.
+        // Si el campo no se popula automáticamente, puedes hacerlo aquí:
+        /*
+        if ($this->filterForm && $field = $this->filterForm->getField('timeline_id', 'filter')) {
+             // Esta forma de rellenar dinámicamente un campo SQL es más compleja en J5.
+             // Es mejor que el XML del filtro ya tenga la query o que el modelo prepare el campo.
+             // $field->setOption('query', 'SELECT id AS value, title AS text FROM #__audatoria_timelines WHERE state = 1 ORDER BY title ASC');
         }
-
+        */
 
         parent::display($tpl);
     }
@@ -49,7 +54,7 @@ class ItemsView extends BaseListView
     protected function addToolbar(): void
     {
         $user = Factory::getApplication()->getIdentity();
-        ToolbarHelper::title(Text::_('COM_AUDATORIA_ITEMS_HEADING'), 'list icon-audatoria-items');
+        ToolbarHelper::title(Text::_('COM_AUDATORIA_ITEMS_HEADING'), 'file-alt icon-audatoria-items');
 
         if ($this->canDo->get('core.create')) {
             ToolbarHelper::addNew('item.add');
@@ -77,10 +82,10 @@ class ItemsView extends BaseListView
             'a.ordering' => Text::_('JGRID_HEADING_ORDERING'),
             'a.state' => Text::_('JSTATUS'),
             'a.title' => Text::_('JGLOBAL_TITLE'),
-            'timeline_title' => Text::_('COM_AUDATORIA_TIMELINE'),
+            'timeline_title' => Text::_('COM_AUDATORIA_TIMELINE'), // Alias de la tabla unida
             'a.start_date' => Text::_('COM_AUDATORIA_FIELD_START_DATE'),
             'a.access' => Text::_('JFIELD_ACCESS_LABEL'),
-            'author_name' => Text::_('JAUTHOR'),
+            'author_name' => Text::_('JAUTHOR'), // Alias de la tabla unida
             'a.created_time' => Text::_('JDATE_CREATED'),
             'a.language' => Text::_('JGRID_HEADING_LANGUAGE'),
             'a.id' => Text::_('JGRID_HEADING_ID')

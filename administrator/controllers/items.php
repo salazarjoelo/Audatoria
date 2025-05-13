@@ -1,11 +1,11 @@
 <?php
 // Ubicación: administrator/controllers/items.php
-namespace Joomla\Component\Audatoria\Administrator\Controller;
+namespace Salazarjoelo\Component\Audatoria\Administrator\Controller; // NAMESPACE CORREGIDO
 
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\AdminController;
-use Joomla\CMS\Factory;
+// No necesitas Factory aquí si no lo usas directamente.
 
 class ItemsController extends AdminController
 {
@@ -16,11 +16,9 @@ class ItemsController extends AdminController
         parent::__construct($config);
     }
 
-    public function getModel($name = 'Item', $prefix = 'Joomla\\Component\\Audatoria\\Administrator\\Model', $config = ['ignore_request' => true])
+    public function getModel($name = 'Item', $prefix = 'Salazarjoelo\Component\Audatoria\Administrator\Model', $config = ['ignore_request' => true]) // Namespace del modelo CORREGIDO
     {
-        if (empty($name)) {
-            $name = 'Item'; // Para acciones de lote, usa el modelo singular
-        }
+        // Para acciones de lote, AdminController usa el modelo singular.
         return parent::getModel($name, $prefix, $config);
     }
 }

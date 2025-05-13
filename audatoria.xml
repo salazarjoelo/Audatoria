@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" method="upgrade" version="5.0" client="site">
+<extension type="component" method="upgrade" version="5.0">
     <name>com_audatoria</name>
     <author>Joel Salazar</author>
     <creationDate>Mayo 2025</creationDate>
@@ -7,34 +7,116 @@
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>salazarjoelo@gmail.com</authorEmail>
     <authorUrl>https://github.com/salazarjoelo</authorUrl>
-    <version>1.0.1</version> <description>COM_AUDATORIA_XML_DESCRIPTION</description>
+    <version>1.0.2</version> <description>COM_AUDATORIA_XML_DESCRIPTION</description>
 
     <scriptfile>script.php</scriptfile>
     <php_minimum>8.1</php_minimum>
     <joomla_minimum>5.0</joomla_minimum>
 
-    <namespace path="src">Salazarjoelo\Component\Audatoria\Site</namespace>
-
     <files folder="site">
-        <filename>Audatoria.php</filename>
+        <filename>audatoria.php</filename>
         <filename>composer.json</filename>
-        <filename>composer.lock</filename> <folder>src</folder>       <folder>services</folder>
+        <filename>composer.lock</filename>
+        <folder>controllers</folder>
         <folder>language</folder>
-        <folder>vendor</folder>   </files>
-
-    <languages folder="site/language">
+        <folder>models</folder>
+        <folder>services</folder>
+        <folder>src</folder>
+        <folder>views</folder>
+        <folder>media</folder>
+        </files>
+    <languages folder="site/language" client="site">
         <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
         <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
+        <language tag="es-ES">es-ES/es-ES.com_audatoria.ini</language>
+        <language tag="es-ES">es-ES/es-ES.com_audatoria.sys.ini</language>
     </languages>
+    <media destination="com_audatoria" folder="media/site">
+        </media>
 
     <administration>
-        <menu img="class:bars">COM_AUDATORIA_MENU</menu> <languages folder="admin/language">
-             <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
+        <menu img="class:stopwatch icon-audatoria" link="index.php?option=com_audatoria&amp;view=timelines">COM_AUDATORIA_MENU_ADMIN</menu>
+        <submenu>
+            <menuitem view="timelines" link="index.php?option=com_audatoria&amp;view=timelines" img="class:list icon-audatoria-timelines">COM_AUDATORIA_SUBMENU_TIMELINES</menuitem>
+            <menuitem view="items" link="index.php?option=com_audatoria&amp;view=items" img="class:file-alt icon-audatoria-item">COM_AUDATORIA_SUBMENU_ITEMS</menuitem>
+            <menuitem view="channels" link="index.php?option=com_audatoria&amp;view=channels" img="class:youtube icon-audatoria-channel">COM_AUDATORIA_SUBMENU_CHANNELS</menuitem>
+            </submenu>
+
+        <files folder="administrator">
+            <filename>access.xml</filename>
+            <filename>audatoria.php</filename>
+            <filename>config.xml</filename>
+            <filename>composer.json</filename>
+            <filename>composer.lock</filename>
+            <folder>controllers</folder>
+            <folder>forms</folder>
+            <folder>helpers</folder>
+            <folder>language</folder>
+            <folder>layouts</folder>
+            <folder>models</folder>
+            <folder>services</folder>
+            <folder>sql</folder>
+            <folder>src</folder>
+            <folder>tables</folder>
+            <folder>views</folder>
+            </files>
+        <languages folder="administrator/language" client="administrator">
+            <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
+            <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
+            <language tag="es-ES">es-ES/es-ES.com_audatoria.ini</language>
+            <language tag="es-ES">es-ES/es-ES.com_audatoria.sys.ini</language>
         </languages>
     </administration>
 
     <serviceproviders>
-         <serviceprovider>Salazarjoelo\Component\Audatoria\Site\Service\Provider</serviceprovider>
+        <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Site" type="site">services/provider.php</serviceprovider>
+        <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Administrator" type="administrator">services/provider.php</serviceprovider>
     </serviceproviders>
 
+    <install>
+        <sql>
+            <file driver="mysql" charset="utf8mb4">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install>
+    <uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8mb4">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall>
+    <update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update>
+
+    <config>
+        <fields name="params">
+            <fieldset name="component" label="COM_AUDATORIA_CONFIG_FIELDSET_LABEL">
+                <field name="Maps_API_KEY" type="text"
+                    label="COM_AUDATORIA_CONFIG_Maps_API_KEY_LABEL"
+                    description="COM_AUDATORIA_CONFIG_Maps_API_KEY_DESC"
+                    filter="string"
+                />
+                <field name="youtube_api_key" type="text"
+                    label="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_LABEL"
+                    description="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_DESC"
+                    filter="string"
+                />
+                <field name="auto_publish_imported" type="radio"
+                    label="COM_AUDATORIA_CONFIG_AUTO_PUBLISH_IMPORTED_LABEL"
+                    description="COM_AUDATORIA_CONFIG_AUTO_PUBLISH_IMPORTED_DESC"
+                    default="0" class="btn-group btn-group-yesno"
+                >
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="import_max_pages" type="number" label="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_LABEL"
+                    description="COM_AUDATORIA_CONFIG_IMPORT_MAX_PAGES_DESC"
+                    default="5" step="1" min="1" max="20" />
+                <field name="import_videos_per_page" type="number" label="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_LABEL"
+                    description="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_DESC"
+                    default="25" step="1" min="5" max="50" />
+            </fieldset>
+        </fields>
+    </config>
 </extension>

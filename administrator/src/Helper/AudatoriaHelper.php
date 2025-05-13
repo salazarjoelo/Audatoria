@@ -1,108 +1,112 @@
 <?php
-// Ubicación: administrator/src/Helper/AudatoriaHelper.php
-namespace Joomla\Component\Audatoria\Administrator\Helper;
+// Ubicación: administrator/src/Helper/AudatoriaHelper.php (o administrator/helpers/AudatoriaHelper.php con namespace ajustado)
+namespace Salazarjoelo\Component\Audatoria\Administrator\src\Helper; // NAMESPACE CORREGIDO
 
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Access\Access;
+// use Joomla\CMS\Access\Access; // No se usa directamente Access aquí si getActions ya lo hace
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Object\CMSObject; // Para el tipado de retorno de getActions
 
 class AudatoriaHelper
 {
-    /**
-     * Obtiene las acciones permitidas para una sección del componente.
-     *
-     * @param   string  $section  La sección (ej. 'component', 'timeline', 'item', 'channel').
-     * @param   int     $id       El ID del ítem específico (para permisos de ítem).
-     *
-     * @return  \Joomla\CMS\Object\CMSObject  Un objeto con las acciones permitidas.
-     */
-    public static function getActions(string $section = 'component', int $id = 0): \Joomla\CMS\Object\CMSObject
+    public static function getActions(string $assetName = 'com_audatoria', int $id = 0): CMSObject
     {
-        $user      = Factory::getApplication()->getIdentity();
-        $component = 'com_audatoria';
-        $assetName = $component;
+        $user   = Factory::getApplication()->getIdentity();
+        $result = new CMSObject;
 
-        if ($id && $section !== 'component') {
-            $assetName .= '.' . $section . '.' . $id;
-        } elseif ($section !== 'component') {
-            $assetName .= '.' . $section; // Para categorías o tipos generales
+        if ($id) {
+            // Para un ítem específico, ej. com_audatoria.timeline.1
+            $assetName = 'com_audatoria.' . $assetName . '.' . $id;
+        } elseif ($assetName !== 'com_audatoria') {
+             // Para una categoría/tipo, ej. com_audatoria.timeline
+            $assetName = 'com_audatoria.' . $assetName;
         }
-        // Para 'component', assetName es solo 'com_audatoria'
+        // Si $assetName es 'com_audatoria', es para el componente en general.
 
-        $actions = new \Joomla\CMS\Object\CMSObject;
-
-        $standard_actions = [
-            'core.admin', 'core.manage', 'core.create', 'core.edit',
-            'core.edit.state', 'core.edit.own', 'core.delete',
+        $actions = [
+            'core.admin', 'core.manage', 'core.create', 'core.delete',
+            'core.edit', 'core.edit.state', 'core.edit.own',
         ];
-        // Permisos personalizados
-        $custom_actions = [];
-        if ($section === 'channel') {
-            $custom_actions[] = 'channel.import';
+
+        // Permisos personalizados específicos de tu componente
+        // Ejemplo: si $assetName se refiere a la sección 'channel'
+        if (strpos($assetName, 'com_audatoria.channel') === 0 || $assetName === 'com_audatoria.channel') {
+             $actions[] = 'channel.import'; // Asegúrate que esta acción esté en access.xml
         }
 
 
-        foreach ($standard_actions as $action) {
-            $actions->set($action, $user->authorise($action, $assetName));
-        }
-        foreach ($custom_actions as $action) {
-            $actions->set($action, $user->authorise($action, $assetName));
+        foreach ($actions as $action) {
+            $result->set($action, $user->authorise($action, $assetName));
         }
 
-        return $actions;
+        return $result;
     }
 
-    /**
-     * Configura el menú lateral (submenu).
-     *
-     * @param   string  $activeView  El nombre de la vista activa actual.
-     *
-     * @return  array  Un array de ítems para el menú lateral.
-     */
     public static function getSidebarItems(string $activeView = 'timelines'): array
     {
         $items = [];
+        $user = Factory::getApplication()->getIdentity(); // Para comprobar permisos si es necesario
+
+        // Dashboard (si existe)
+        // if ($user->authorise('core.manage', 'com_audatoria')) { // Ejemplo de permiso
+        //     $items[] = [
+        //         'title' => Text::_('COM_AUDATORIA_SUBMENU_DASHBOARD'), // Necesitas esta cadena de idioma
+        //         'link' => 'index.php?option=com_audatoria&view=dashboard', // Asume que tienes una vista 'dashboard'
+        //         'active' => ($activeView === 'dashboard'),
+        //         'icon' => 'icon-home', // O el icono que prefieras
+        //     ];
+        // }
 
         $items[] = [
             'title' => Text::_('COM_AUDATORIA_SUBMENU_TIMELINES'),
             'link' => 'index.php?option=com_audatoria&view=timelines',
             'active' => ($activeView === 'timelines' || $activeView === 'timeline'),
+            'icon' => 'icon-list',
         ];
         $items[] = [
             'title' => Text::_('COM_AUDATORIA_SUBMENU_ITEMS'),
             'link' => 'index.php?option=com_audatoria&view=items',
             'active' => ($activeView === 'items' || $activeView === 'item'),
+            'icon' => 'icon-file-alt',
         ];
         $items[] = [
             'title' => Text::_('COM_AUDATORIA_SUBMENU_CHANNELS'),
             'link' => 'index.php?option=com_audatoria&view=channels',
             'active' => ($activeView === 'channels' || $activeView === 'channel'),
+            'icon' => 'icon-youtube', // O 'icon-podcast' si es más genérico
         ];
+        
+        // Ejemplo de añadir condicionalmente basado en permisos
+        // if ($user->authorise('core.options', 'com_audatoria')) {
+        //     $items[] = [
+        //        'title'    => Text::_('JGLOBAL_CONFIGURATION'),
+        //        'link'     => 'index.php?option=com_config&view=component&component=com_audatoria',
+        //        'active'   => ($activeView === 'config'),
+        //        'icon'     => 'icon-cogs',
+        //    ];
+        // }
 
-        // Permitir a otros componentes añadir a este menú lateral
+        // Permitir a otros componentes añadir a este menú lateral (opcional)
         // Factory::getApplication()->triggerEvent('onGetAudatoriaSidebarItems', [&$items, $activeView]);
 
         return $items;
     }
 
-    /**
-     * Obtiene los campos de filtro para una vista específica.
-     *
-     * @param string $viewName El nombre de la vista (ej. 'timelines', 'items').
-     *
-     * @return string El XML de los campos de filtro.
-     */
+    // getFilterFields no es tan común aquí, usualmente se define en el modelo (getFilterForm).
+    // Pero si lo usas, asegúrate que el path sea correcto.
+    /*
     public static function getFilterFields(string $viewName): string
     {
-        $path = ComponentHelper::getXmlPath('com_audatoria') . '/forms/filter_' . $viewName . '.xml';
+        // Esto debería apuntar a administrator/forms/filter_VIEWNAME.xml
+        $path = JPATH_COMPONENT_ADMINISTRATOR . '/forms/filter_' . $viewName . '.xml';
 
         if (file_exists($path)) {
             return $path;
         }
-
-        return ''; // O un XML por defecto
+        return ''; 
     }
+    */
 }

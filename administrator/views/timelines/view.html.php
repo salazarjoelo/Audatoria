@@ -1,16 +1,15 @@
 <?php
 // Ubicación: administrator/views/timelines/view.html.php
-namespace Joomla\Component\Audatoria\Administrator\View\Timelines;
+namespace Salazarjoelo\Component\Audatoria\Administrator\View\Timelines;
 
 \defined('_JEXEC') or die;
 
-use Joomla\CMS\MVC\View\ListView as BaseListView; // Usar ListView para vistas de lista
+use Joomla\CMS\MVC\View\ListView as BaseListView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Helper\ContentHelper; // Para permisos
-use Joomla\CMS\Layout\LayoutHelper; // Para sidebar y searchtools
+use Joomla\CMS\Layout\LayoutHelper; // Para renderizar layouts como el sidebar
 use Joomla\CMS\Factory;
-use Joomla\Component\Audatoria\Administrator\Helper\AudatoriaHelper; // Asumiendo que crearás este helper
+use Salazarjoelo\Component\Audatoria\Administrator\Helper\AudatoriaHelper; // Namespace del Helper CORREGIDO
 
 class TimelinesView extends BaseListView
 {
@@ -19,8 +18,8 @@ class TimelinesView extends BaseListView
     protected $state;
     protected $filterForm;
     protected $activeFilters;
-    protected $sidebar;
     protected $canDo;
+    // El sidebar se renderiza directamente en la plantilla (tmpl) en J4/J5
 
     public function display($tpl = null): void
     {
@@ -29,15 +28,19 @@ class TimelinesView extends BaseListView
         $this->state         = $this->get('State');
         $this->filterForm    = $this->get('FilterForm');
         $this->activeFilters = $this->get('ActiveFilters');
-        $this->canDo         = AudatoriaHelper::getActions('component'); // Permisos a nivel de componente para acciones de lista
+        $this->canDo         = AudatoriaHelper::getActions('com_audatoria'); // Permisos a nivel de componente para acciones de lista
 
         // Comprobar errores.
         if (count($errors = $this->get('Errors'))) {
+            \Joomla\CMS\Log\Log::add(implode("\n", $errors), \Joomla\CMS\Log\Log::ERROR, 'com_audatoria');
             throw new \Exception(implode("\n", $errors), 500);
         }
 
         $this->addToolbar();
-        $this->sidebar = LayoutHelper::render('joomla.sidebars.submenu', ['items' => AudatoriaHelper::getSidebarItems('timelines')]);
+        
+        // Renderizar el sidebar para pasarlo a la plantilla, o renderizarlo directamente en la plantilla
+        // $this->sidebar = LayoutHelper::render('joomla.sidebars.submenu', ['items' => AudatoriaHelper::getSidebarItems('timelines')]);
+        // Es más común en J5 que la plantilla tmpl/default.php renderice el sidebar.
 
         parent::display($tpl);
     }
@@ -56,8 +59,8 @@ class TimelinesView extends BaseListView
         if ($this->canDo->get('core.edit.state')) {
             ToolbarHelper::publish('timelines.publish', 'JTOOLBAR_PUBLISH', true);
             ToolbarHelper::unpublish('timelines.unpublish', 'JTOOLBAR_UNPUBLISH', true);
-            ToolbarHelper::archive('timelines.archive'); // Usar el de ListView
-            ToolbarHelper::checkin('timelines.checkin'); // Usar el de ListView
+            ToolbarHelper::archive('timelines.archive');
+            ToolbarHelper::checkin('timelines.checkin');
         }
         if ($this->canDo->get('core.delete')) {
             ToolbarHelper::deleteList(Text::_('COM_AUDATORIA_CONFIRM_DELETE_TIMELINES_MSG'), 'timelines.delete', 'JTOOLBAR_DELETE');
@@ -67,12 +70,6 @@ class TimelinesView extends BaseListView
         }
     }
 
-    /**
-     * Retorna un array de campos por los cuales se puede ordenar la lista.
-     * El valor es el título de la columna y la clave es el nombre del campo en la BD.
-     *
-     * @return  array
-     */
     protected function getSortFields(): array
     {
         return [

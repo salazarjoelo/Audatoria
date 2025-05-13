@@ -1,6 +1,6 @@
 <?php
 // Ubicación: administrator/models/items.php
-namespace Joomla\Component\Audatoria\Administrator\Model;
+namespace Salazarjoelo\Component\Audatoria\Administrator\Model; // NAMESPACE CORREGIDO
 
 \defined('_JEXEC') or die;
 
@@ -17,12 +17,15 @@ class ItemsModel extends ListModel
                 'id', 'a.id',
                 'title', 'a.title',
                 'state', 'a.state',
-                'access', 'a.access', 'access_level',
-                'created_user_id', 'a.created_user_id', 'author_id',
+                'access', 'a.access',
+                'access_level', 'ag.title', // Calificado con alias de tabla
+                'created_user_id', 'a.created_user_id',
+                'author_name', 'u.name', // Calificado con alias de tabla
                 'created_time', 'a.created_time',
                 'language', 'a.language',
                 'ordering', 'a.ordering',
-                'timeline_id', 'a.timeline_id', 'timeline_title', // Para filtrar y ordenar por timeline
+                'timeline_id', 'a.timeline_id',
+                'timeline_title', 'tl.title', // Calificado con alias de tabla
                 'start_date', 'a.start_date',
                 'media_type', 'a.media_type',
             ];
@@ -39,12 +42,11 @@ class ItemsModel extends ListModel
             $this->getState(
                 'list.select',
                 'a.id, a.title, a.state, a.access, a.created_time, a.created_user_id, a.language, a.ordering, ' .
-                'a.timeline_id, a.start_date, a.media_type'
+                'a.timeline_id, a.start_date, a.media_type, a.checked_out, a.checked_out_time' // Añadido checked_out
             )
         )
         ->from($db->quoteName('#__audatoria_items', 'a'));
 
-        // Uniones para filtros y visualización
         $query->select('tl.title AS timeline_title')
             ->join('LEFT', $db->quoteName('#__audatoria_timelines', 'tl'), 'tl.id = a.timeline_id');
 
@@ -54,31 +56,29 @@ class ItemsModel extends ListModel
         $query->select('u.name AS author_name')
             ->join('LEFT', $db->quoteName('#__users', 'u'), 'u.id = a.created_user_id');
             
-        // $query->select('l.title AS language_title')
+        $query->select('uc.name AS editor') // Para checked_out
+             ->join('LEFT', $db->quoteName('#__users', 'uc'), 'uc.id = a.checked_out');
+            
+        // $query->select('l.title AS language_title') // Descomentar si se necesita el título del idioma
         //    ->join('LEFT', $db->quoteName('#__languages', 'l'), 'l.lang_code = a.language');
 
-        // Filtrar por estado
         $state = $this->getState('filter.state');
         if (is_numeric($state)) {
             $query->where('a.state = ' . (int) $state);
-        } elseif ($state === '') {
+        } elseif ($state === '') { // Mostrar publicados y no publicados por defecto
              $query->where('a.state IN (0, 1)');
         }
 
-
-        // Filtrar por acceso
         $access = $this->getState('filter.access');
         if (is_numeric($access)) {
             $query->where('a.access = ' . (int) $access);
         }
         
-        // Filtrar por timeline_id
         $timelineId = $this->getState('filter.timeline_id');
         if (is_numeric($timelineId) && $timelineId > 0) {
             $query->where('a.timeline_id = ' . (int) $timelineId);
         }
 
-        // Filtrar por búsqueda
         $search = $this->getState('filter.search');
         if (!empty($search)) {
             if (stripos($search, 'id:') === 0) {
@@ -90,26 +90,18 @@ class ItemsModel extends ListModel
         }
         
         $language = $this->getState('filter.language');
-        if (!empty($language)) {
+        if (!empty($language) && $language !== '*') { // Añadir comprobación para '*'
             $query->where('a.language = ' . $db->quote($language));
         }
 
-
-        // Ordenación
-        $listOrder = $this->getState('list.ordering', 'a.ordering'); // Orden por defecto
+        $listOrder = $this->getState('list.ordering', 'a.ordering'); 
         $listDirn  = $this->getState('list.direction', 'ASC');
         
-        $validOrderCols = $this->getFilterFields();
-        if (isset($validOrderCols[$listOrder])) {
-            if ($listOrder === 'timeline_title') { // Ordenar por el título de la tabla unida
-                $query->order($db->quoteName('tl.title') . ' ' . $db->escape($listDirn));
-            } else {
-                $query->order($db->escape($listOrder) . ' ' . $db->escape($listDirn));
-            }
+        if (in_array($listOrder, $this->getFilterFields())) {
+             $query->order($db->escape($listOrder) . ' ' . $db->escape($listDirn));
         } else {
              $query->order($db->quoteName('a.ordering') . ' ASC, ' . $db->quoteName('a.start_date') . ' ASC');
         }
-
 
         return $query;
     }
@@ -121,10 +113,10 @@ class ItemsModel extends ListModel
         $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '', 'string');
         $this->setState('filter.search', $search);
 
-        $state = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_state', '', 'string');
+        $state = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_state', '', 'cmd'); // Usar cmd para estado
         $this->setState('filter.state', $state);
         
-        $accessId = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', null, 'int');
+        $accessId = $this->getUserStateFromRequest($this->context . '.filter.access', 'filter_access', 0, 'int'); // 0 para "Todos los niveles"
         $this->setState('filter.access', $accessId);
         
         $language = $this->getUserStateFromRequest($this->context . '.filter.language', 'filter_language', '', 'string');
@@ -132,7 +124,6 @@ class ItemsModel extends ListModel
 
         $timelineId = $this->getUserStateFromRequest($this->context . '.filter.timeline_id', 'filter_timeline_id', 0, 'int');
         $this->setState('filter.timeline_id', $timelineId);
-
 
         parent::populateState($ordering, $direction);
     }

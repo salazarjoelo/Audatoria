@@ -1,6 +1,6 @@
 <?php
 // Ubicación: administrator/models/channels.php
-namespace Joomla\Component\Audatoria\Administrator\Model;
+namespace Salazarjoelo\Component\Audatoria\Administrator\Model; // NAMESPACE CORREGIDO
 
 \defined('_JEXEC') or die;
 
@@ -16,9 +16,10 @@ class ChannelsModel extends ListModel
             $config['filter_fields'] = [
                 'id', 'a.id',
                 'title', 'a.title',
-                'channel_id_search', 'a.channel_id', // Renombrado para evitar colisión con el campo del form
-                'state', 'a.state', // Habilitado/Deshabilitado
-                'timeline_id', 'a.timeline_id', 'timeline_title',
+                'channel_id', 'a.channel_id', // Cambiado de channel_id_search
+                'state', 'a.state', 
+                'timeline_id', 'a.timeline_id', 
+                'timeline_title', 'tl.title', // Calificado con alias de tabla
                 'last_checked', 'a.last_checked',
             ];
         }
@@ -40,21 +41,21 @@ class ChannelsModel extends ListModel
 
         $query->select('tl.title AS timeline_title')
             ->join('LEFT', $db->quoteName('#__audatoria_timelines', 'tl'), 'tl.id = a.timeline_id');
+         
+        $query->select('u.name AS editor') // Para checked_out
+             ->join('LEFT', $db->quoteName('#__users', 'u'), 'u.id = a.checked_out');
 
-        // Filtrar por estado (enabled/disabled)
+
         $state = $this->getState('filter.state');
         if (is_numeric($state)) {
             $query->where('a.state = ' . (int) $state);
         }
         
-        // Filtrar por timeline_id
         $timelineId = $this->getState('filter.timeline_id');
         if (is_numeric($timelineId) && $timelineId > 0) {
             $query->where('a.timeline_id = ' . (int) $timelineId);
         }
 
-
-        // Filtrar por búsqueda (título del canal o ID del canal)
         $search = $this->getState('filter.search');
         if (!empty($search)) {
             if (stripos($search, 'id:') === 0) {
@@ -65,21 +66,16 @@ class ChannelsModel extends ListModel
             }
         }
 
-        // Ordenación
         $listOrder = $this->getState('list.ordering', 'a.title');
         $listDirn  = $this->getState('list.direction', 'ASC');
         
-        $validOrderCols = $this->getFilterFields();
-        if (isset($validOrderCols[$listOrder])) {
-             if ($listOrder === 'timeline_title') {
-                $query->order($db->quoteName('tl.title') . ' ' . $db->escape($listDirn));
-            } else {
-                $query->order($db->escape($listOrder) . ' ' . $db->escape($listDirn));
-            }
+        // Validar la columna de ordenación para evitar SQL injection
+        if (in_array($listOrder, $this->getFilterFields())) {
+             $query->order($db->escape($listOrder) . ' ' . $db->escape($listDirn));
         } else {
-            $query->order($db->quoteName('a.title') . ' ASC');
+             // Fallback a un ordenamiento por defecto seguro
+             $query->order($db->quoteName('a.title') . ' ASC');
         }
-
 
         return $query;
     }
@@ -91,7 +87,7 @@ class ChannelsModel extends ListModel
         $search = $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '', 'string');
         $this->setState('filter.search', $search);
 
-        $state = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_state', '', 'string'); // Para habilitado/deshabilitado
+        $state = $this->getUserStateFromRequest($this->context . '.filter.state', 'filter_state', '', 'cmd'); // Usar cmd para estado
         $this->setState('filter.state', $state);
         
         $timelineId = $this->getUserStateFromRequest($this->context . '.filter.timeline_id', 'filter_timeline_id', 0, 'int');

@@ -1,38 +1,33 @@
 <?php
 // Ubicación: administrator/tables/channel.php
-namespace Joomla\Component\Audatoria\Administrator\Table;
+namespace Salazarjoelo\Component\Audatoria\Administrator\Table; // NAMESPACE CORREGIDO
 
 \defined('_JEXEC') or die;
 
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\CMS\Language\Text; // Para Text::_()
 
-class ChannelTable extends Table // Renombrar a ChannelTable
+class ChannelTable extends Table
 {
-    /**
-     * Constructor
-     *
-     * @param   DatabaseDriver  &$db  A database connector object
-     */
-    public function __construct(DatabaseDriver &$db)
+    public function __construct(DatabaseDriver &$db) // El tipado del parámetro $db es correcto
     {
         parent::__construct('#__audatoria_channels', 'id', $db);
+        $this->setColumnAlias('published', 'state'); // Mapear 'published' (de JTable) a 'state' (de tu tabla)
     }
 
     public function check()
     {
         if (empty($this->channel_id)) {
-            $this->setError(\Joomla\CMS\Language\Text::_('COM_AUDATORIA_ERROR_CHANNEL_ID_REQUIRED'));
+            $this->setError(Text::_('COM_AUDATORIA_ERROR_CHANNEL_ID_REQUIRED'));
             return false;
         }
 
         if (empty($this->timeline_id) || (int) $this->timeline_id <= 0) {
-            $this->setError(\Joomla\CMS\Language\Text::_('COM_AUDATORIA_ERROR_CHANNEL_TIMELINE_ID_REQUIRED'));
+            $this->setError(Text::_('COM_AUDATORIA_ERROR_CHANNEL_TIMELINE_ID_REQUIRED'));
             return false;
         }
         
-        // Validar que el channel_id no esté duplicado para la misma timeline_id
-        // Esto ya está cubierto por el UNIQUE INDEX en la BD, pero una comprobación aquí puede dar un error más amigable.
         $query = $this->_db->getQuery(true)
             ->select($this->_db->quoteName('id'))
             ->from($this->_db->quoteName($this->_tbl))
@@ -45,10 +40,9 @@ class ChannelTable extends Table // Renombrar a ChannelTable
         $this->_db->setQuery($query);
 
         if ($this->_db->loadResult()) {
-            $this->setError(\Joomla\CMS\Language\Text::_('COM_AUDATORIA_ERROR_CHANNEL_ID_DUPLICATE_FOR_TIMELINE'));
+            $this->setError(Text::_('COM_AUDATORIA_ERROR_CHANNEL_ID_DUPLICATE_FOR_TIMELINE'));
             return false;
         }
-
 
         return parent::check();
     }

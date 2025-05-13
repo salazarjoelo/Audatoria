@@ -1,6 +1,6 @@
 <?php
 // Ubicación: administrator/views/item/view.html.php
-namespace Joomla\Component\Audatoria\Administrator\View\Item;
+namespace Salazarjoelo\Component\Audatoria\Administrator\View\Item; // NAMESPACE CORREGIDO
 
 \defined('_JEXEC') or die;
 
@@ -8,9 +8,9 @@ use Joomla\CMS\MVC\View\FormView as BaseFormView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-use Joomla\Component\Audatoria\Administrator\Helper\AudatoriaHelper;
+use Salazarjoelo\Component\Audatoria\Administrator\Helper\AudatoriaHelper; // Namespace del Helper CORREGIDO
 
-class ItemView extends BaseFormView // Renombrar la clase
+class ItemView extends BaseFormView
 {
     protected $form;
     protected $item;
@@ -22,16 +22,26 @@ class ItemView extends BaseFormView // Renombrar la clase
         $this->form  = $this->get('Form');
         $this->item  = $this->get('Item');
         $this->state = $this->get('State');
-        $this->canDo = AudatoriaHelper::getActions('item', $this->item->id ?? 0);
+
+        if (empty($this->item) || !is_object($this->item)) {
+            $this->item = new \stdClass();
+            $this->item->id = $this->state->get('item.id', 0);
+        }
+        if (!isset($this->item->id)) {
+             $this->item->id = 0;
+        }
+        
+        $this->canDo = AudatoriaHelper::getActions('item', (int) $this->item->id);
 
         if (empty($this->form)) {
              throw new \Exception(Text::_('COM_AUDATORIA_ERROR_FORM_NOT_LOADED'), 500);
         }
-        if (empty($this->item) && Factory::getApplication()->input->getInt('id', 0) != 0) {
+        if ($this->item->id == 0 && Factory::getApplication()->input->getInt('id', 0) != 0) {
              throw new \Exception(Text::_('COM_AUDATORIA_ERROR_ITEM_NOT_FOUND_ADMIN'), 404);
         }
 
         if (count($errors = $this->get('Errors'))) {
+            \Joomla\CMS\Log\Log::add(implode("\n", $errors), \Joomla\CMS\Log\Log::ERROR, 'com_audatoria');
             throw new \Exception(implode("\n", $errors), 500);
         }
 
@@ -43,12 +53,13 @@ class ItemView extends BaseFormView // Renombrar la clase
     {
         Factory::getApplication()->input->set('hidemainmenu', true);
         $isNew = ($this->item->id == 0);
+        $title = $isNew ? Text::_('COM_AUDATORIA_ITEM_NEW') : Text::_('COM_AUDATORIA_ITEM_EDIT');
 
-        ToolbarHelper::title(
-            Text::_($isNew ? 'COM_AUDATORIA_ITEM_NEW' : 'COM_AUDATORIA_ITEM_EDIT')
-             . ($isNew || empty($this->item->title) ? '' : ': ' . $this->item->title),
-            'file-add icon-audatoria-item'
-        );
+        if (!$isNew && !empty($this->item->title)) {
+             $title .= ': ' . $this->item->title;
+        }
+
+        ToolbarHelper::title($title, 'file-alt icon-audatoria-item'); // 'file-alt' o 'file-plus' para nuevo
 
         if ($this->canDo->get('core.edit') || ($isNew && $this->canDo->get('core.create'))) {
             ToolbarHelper::apply('item.apply');
@@ -56,8 +67,10 @@ class ItemView extends BaseFormView // Renombrar la clase
         }
         if ($this->canDo->get('core.create')) {
             ToolbarHelper::save2new('item.save2new');
-             // No hay save2copy por defecto en FormController base, tendrías que implementarlo si lo necesitas
-             // if (!$isNew) ToolbarHelper::save2copy('item.save2copy');
+             // save2copy no es estándar en FormController, necesitaría implementación en el controlador.
+             // if (!$isNew && $this->canDo->get('core.create')) {
+             //     ToolbarHelper::save2copy('item.save2copy');
+             // }
         }
 
         ToolbarHelper::cancel('item.cancel', $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE');
