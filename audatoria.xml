@@ -2,18 +2,20 @@
 <extension type="component" method="upgrade" version="5.0">
     <name>com_audatoria</name>
     <author>Joel Salazar</author>
-    <creationDate>Mayo 2025</creationDate>
-    <copyright>Copyright (C) 2025 Joel Salazar. Todos los derechos reservados.</copyright>
+    <creationDate>May 2025</creationDate>
+    <copyright>Copyright (C) 2025 Joel Salazar. All rights reserved.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>salazarjoelo@gmail.com</authorEmail>
     <authorUrl>https://github.com/salazarjoelo</authorUrl>
     <version>1.0.6</version>
     <description>COM_AUDATORIA_XML_DESCRIPTION</description>
 
+    <!-- Define the script file for installation/uninstallation -->
     <scriptfile>script.php</scriptfile>
     <php_minimum>8.1</php_minimum>
-    <joomla_minimum>4.0</joomla_minimum>
+    <joomla_minimum>5.0</joomla_minimum>
 
+    <!-- Define site files -->
     <files folder="site">
         <filename>audatoria.php</filename>
         <filename>composer.json</filename>
@@ -27,26 +29,40 @@
         <folder>src</folder>
         <folder>views</folder>
     </files>
+
+    <!-- Define language files for the site -->
     <languages folder="site/language" client="site">
         <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
         <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
         <language tag="es-ES">es-ES/es-ES.com_audatoria.ini</language>
         <language tag="es-ES">es-ES/es-ES.com_audatoria.sys.ini</language>
     </languages>
+
+    <!-- Administration section -->
     <administration>
-        <menu link="index.php?option=com_audatoria&amp;view=timelines" img="class:stopwatch icon-audatoria">COM_AUDATORIA_MENU_ADMIN</menu>
+        <!-- Main menu and submenu -->
+        <menu link="index.php?option=com_audatoria&amp;view=timelines" img="class:stopwatch icon-audatoria">
+            COM_AUDATORIA_MENU_ADMIN
+        </menu>
         <submenu>
-            <menuitem view="timelines" link="index.php?option=com_audatoria&amp;view=timelines" img="class:list icon-audatoria-timelines">COM_AUDATORIA_SUBMENU_TIMELINES</menuitem>
-            <menuitem view="items" link="index.php?option=com_audatoria&amp;view=items" img="class:file-alt icon-audatoria-item">COM_AUDATORIA_SUBMENU_ITEMS</menuitem>
-            <menuitem view="channels" link="index.php?option=com_audatoria&amp;view=channels" img="class:podcast icon-audatoria-channel">COM_AUDATORIA_SUBMENU_CHANNELS</menuitem>
+            <menuitem view="timelines" link="index.php?option=com_audatoria&amp;view=timelines" img="class:list icon-audatoria-timelines">
+                COM_AUDATORIA_SUBMENU_TIMELINES
+            </menuitem>
+            <menuitem view="items" link="index.php?option=com_audatoria&amp;view=items" img="class:file-alt icon-audatoria-item">
+                COM_AUDATORIA_SUBMENU_ITEMS
+            </menuitem>
+            <menuitem view="channels" link="index.php?option=com_audatoria&amp;view=channels" img="class:podcast icon-audatoria-channel">
+                COM_AUDATORIA_SUBMENU_CHANNELS
+            </menuitem>
         </submenu>
 
+        <!-- Administrator files -->
         <files folder="administrator">
             <filename>access.xml</filename>
             <filename>audatoria.php</filename>
             <filename>index.html</filename>
             <folder>controllers</folder>
-			<folder>helper</folder>
+            <folder>helper</folder>
             <folder>language</folder>
             <folder>media</folder>
             <folder>models</folder>
@@ -56,6 +72,8 @@
             <folder>tables</folder>
             <folder>views</folder>
         </files>
+
+        <!-- Administrator language files -->
         <languages folder="administrator/language" client="administrator">
             <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
             <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
@@ -64,11 +82,13 @@
         </languages>
     </administration>
 
+    <!-- Define service providers -->
     <serviceproviders>
         <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Site" type="site">services/provider.php</serviceprovider>
         <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Administrator" type="administrator">services/provider.php</serviceprovider>
     </serviceproviders>
 
+    <!-- SQL Installation and Uninstallation -->
     <install>
         <sql>
             <file driver="mysql" charset="utf8mb4">sql/install.mysql.utf8.sql</file>
@@ -85,6 +105,7 @@
         </schemas>
     </update>
 
+    <!-- Configuration fields -->
     <config>
         <fields name="params">
             <fieldset name="component" label="COM_AUDATORIA_CONFIG_FIELDSET_LABEL">
@@ -116,7 +137,7 @@
                     description="COM_AUDATORIA_CONFIG_IMPORT_VIDEOS_PER_PAGE_DESC"
                     default="25" step="1" min="5" max="50"
                 />
-                 <field name="PHP_PATH" type="text"
+                <field name="PHP_PATH" type="text"
                     label="COM_AUDATORIA_CONFIG_PHP_PATH_LABEL"
                     description="COM_AUDATORIA_CONFIG_PHP_PATH_DESC"
                     filter="string"
