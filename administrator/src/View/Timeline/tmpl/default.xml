@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_AUDATORIA_MENUITEM_TIMELINE_LAYOUT_DEFAULT_TITLE" option="View">
+        <message>
+            <![CDATA[COM_AUDATORIA_MENUITEM_TIMELINE_LAYOUT_DEFAULT_MESSAGE]]>
+        </message>
+    </layout>
+
+    <fields name="request">
+        <fieldset name="request"
+            label="COM_AUDATORIA_MENUITEM_TIMELINE_REQUEST_FIELDSET_LABEL"
+            description="COM_AUDATORIA_MENUITEM_TIMELINE_REQUEST_FIELDSET_DESC">
+
+            <field name="id"
+                type="sql"
+                label="COM_AUDATORIA_MENUITEM_SELECT_TIMELINE_LABEL"
+                description="COM_AUDATORIA_MENUITEM_SELECT_TIMELINE_DESC"
+                query="SELECT id, title FROM #__audatoria_timelines WHERE state = 1 ORDER BY title ASC"
+                key_field="id"
+                value_field="title"
+                required="true"
+            >
+                <option value="">COM_AUDATORIA_MENUITEM_SELECT_TIMELINE_OPTION</option>
+            </field>
+        </fieldset>
+    </fields>
+
+    </metadata>

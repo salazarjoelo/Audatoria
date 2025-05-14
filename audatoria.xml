@@ -2,37 +2,25 @@
 <extension type="component" method="upgrade" version="5.0">
     <name>com_audatoria</name>
     <author>Joel Salazar</author>
-    <creationDate>May 2025</creationDate>
-    <copyright>Copyright (C) 2025 Joel Salazar. All rights reserved.</copyright>
+    <creationDate>Mayo 2024</creationDate>
+    <copyright>Copyright (C) 2024 Joel Salazar. Todos los derechos reservados.</copyright>
     <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
     <authorEmail>salazarjoelo@gmail.com</authorEmail>
     <authorUrl>https://github.com/salazarjoelo</authorUrl>
-    <version>1.0.6</version>
-    <description>COM_AUDATORIA_XML_DESCRIPTION</description>
+    <version>1.1.10</version> <description>COM_AUDATORIA_XML_DESCRIPTION</description>
 
-    <!-- Minimum requirements -->
     <php_minimum>8.1</php_minimum>
     <joomla_minimum>5.0</joomla_minimum>
 
-    <!-- Script file for installation/uninstallation -->
-    <scriptfile>script.php</scriptfile>
-
-    <!-- Define site files -->
     <files folder="site">
         <filename>audatoria.php</filename>
         <filename>composer.json</filename>
-        <filename>controller.php</filename>
         <filename>index.html</filename>
-        <folder>controllers</folder>
         <folder>language</folder>
-        <folder>media</folder>
-        <folder>models</folder>
         <folder>services</folder>
         <folder>src</folder>
-        <folder>views</folder>
     </files>
 
-    <!-- Define site language files -->
     <languages folder="site/language" client="site">
         <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
         <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
@@ -40,41 +28,40 @@
         <language tag="es-ES">es-ES/es-ES.com_audatoria.sys.ini</language>
     </languages>
 
-    <!-- Administration section -->
+    <media folder="media_files_for_package" destination="com_audatoria">
+        <filename>index.html</filename>
+        <folder>css</folder>
+        <folder>images</folder>
+        <folder>js</folder>
+    </media>
+
     <administration>
-        <!-- Main menu and submenu -->
-        <menu link="index.php?option=com_audatoria&amp;view=timelines" img="class:stopwatch icon-audatoria">
+        <menu icon="stopwatch" link="index.php?option=com_audatoria&amp;view=timelines">
             COM_AUDATORIA_MENU_ADMIN
         </menu>
         <submenu>
-            <menuitem view="timelines" link="index.php?option=com_audatoria&amp;view=timelines" img="class:list icon-audatoria-timelines">
+            <menuitem view="timelines" icon="list" link="index.php?option=com_audatoria&amp;view=timelines">
                 COM_AUDATORIA_SUBMENU_TIMELINES
             </menuitem>
-            <menuitem view="items" link="index.php?option=com_audatoria&amp;view=items" img="class:file-alt icon-audatoria-item">
+            <menuitem view="items" icon="file-alt" link="index.php?option=com_audatoria&amp;view=items">
                 COM_AUDATORIA_SUBMENU_ITEMS
             </menuitem>
-            <menuitem view="channels" link="index.php?option=com_audatoria&amp;view=channels" img="class:podcast icon-audatoria-channel">
+            <menuitem view="channels" icon="podcast" link="index.php?option=com_audatoria&amp;view=channels">
                 COM_AUDATORIA_SUBMENU_CHANNELS
             </menuitem>
         </submenu>
 
-        <!-- Administrator files -->
         <files folder="administrator">
             <filename>access.xml</filename>
             <filename>audatoria.php</filename>
             <filename>index.html</filename>
-            <folder>controllers</folder>
+            <folder>forms</folder>
             <folder>language</folder>
-            <folder>media</folder>
-            <folder>models</folder>
             <folder>services</folder>
             <folder>sql</folder>
             <folder>src</folder>
-            <folder>tables</folder>
-            <folder>views</folder>
         </files>
 
-        <!-- Administrator language files -->
         <languages folder="administrator/language" client="administrator">
             <language tag="en-GB">en-GB/en-GB.com_audatoria.ini</language>
             <language tag="en-GB">en-GB/en-GB.com_audatoria.sys.ini</language>
@@ -83,21 +70,38 @@
         </languages>
     </administration>
 
-    <!-- Define service providers -->
+    <menuitemtypes>
+        <type name="timeline" title="COM_AUDATORIA_MENUITEM_TIMELINE_VIEW_TITLE" description="COM_AUDATORIA_MENUITEM_TIMELINE_VIEW_DESC">
+            <layout name="default" title="COM_AUDATORIA_MENUITEM_TIMELINE_LAYOUT_DEFAULT_TITLE" description="COM_AUDATORIA_MENUITEM_TIMELINE_LAYOUT_DEFAULT_DESC">
+                <message>COM_AUDATORIA_MENUITEM_TIMELINE_LAYOUT_DEFAULT_MESSAGE</message>
+                <request>
+                    <option name="com_audatoria"/>
+                    <option name="view" value="timeline"/>
+                </request>
+            </layout>
+        </type>
+    </menuitemtypes>
+
     <serviceproviders>
-        <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Site" type="site">services/provider.php</serviceprovider>
-        <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Administrator" type="administrator">services/provider.php</serviceprovider>
+        <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Site\Service" type="site">services/provider.php</serviceprovider>
+        <serviceprovider namespace="Salazarjoelo\Component\Audatoria\Administrator\Service" type="administrator">services/provider.php</serviceprovider>
     </serviceproviders>
 
-    <!-- SQL Installation and Uninstallation -->
+    <fileset>
+        <files folder="cli_files_for_package" target="cli">
+            <filename>youtubeimport.php</filename>
+            <filename>index.html</filename>
+        </files>
+    </fileset>
+
     <install>
         <sql>
-            <file driver="mysql" charset="utf8mb4">sql/install.mysql.utf8.sql</file>
+            <file driver="mysql" charset="utf8mb4">administrator/sql/install.mysql.utf8.sql</file>
         </sql>
     </install>
     <uninstall>
         <sql>
-            <file driver="mysql" charset="utf8mb4">sql/uninstall.mysql.utf8.sql</file>
+            <file driver="mysql" charset="utf8mb4">administrator/sql/uninstall.mysql.utf8.sql</file>
         </sql>
     </uninstall>
     <update>
@@ -106,7 +110,6 @@
         </schemas>
     </update>
 
-    <!-- Configuration fields -->
     <config>
         <fields name="params">
             <fieldset name="component" label="COM_AUDATORIA_CONFIG_FIELDSET_LABEL">
@@ -119,11 +122,13 @@
                     label="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_LABEL"
                     description="COM_AUDATORIA_CONFIG_YOUTUBE_API_KEY_DESC"
                     filter="string"
+                    required="true" 
                 />
                 <field name="auto_publish_imported" type="radio"
                     label="COM_AUDATORIA_CONFIG_AUTO_PUBLISH_IMPORTED_LABEL"
                     description="COM_AUDATORIA_CONFIG_AUTO_PUBLISH_IMPORTED_DESC"
-                    default="0" class="btn-group btn-group-yesno"
+                    default="1" 
+                    class="btn-group btn-group-yesno"
                 >
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>

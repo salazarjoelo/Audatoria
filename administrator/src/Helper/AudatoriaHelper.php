@@ -1,63 +1,67 @@
 <?php
-namespace Salazarjoelo\Component\Audatoria;
+namespace Salazarjoelo\Component\Audatoria\Administrator\Helper;
 
-\defined('_JEXEC') or die;
+defined('_JEXEC') or die;
 
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
-// use Joomla\CMS\Access\Access; // No se usa directamente Access aquí si getActions ya lo hace
-use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Object\CMSObject; // Para el tipado de retorno de getActions
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
+use Joomla\CMS\Access\Access;
 
 class AudatoriaHelper
 {
-    public static function getActions(string $assetName = 'com_audatoria', int $id = 0): CMSObject
+    public static function getActions(string $assetSection = '', int $id = 0): CMSObject
     {
-        $user   = Factory::getApplication()->getIdentity();
+        $app    = Factory::getApplication();
+        $user   = $app->getIdentity(); // CORREGIDO
         $result = new CMSObject;
+        $assetName = 'com_audatoria';
 
-        if ($id) {
-            // Para un ítem específico, ej. com_audatoria.timeline.1
-            $assetName = 'com_audatoria.' . $assetName . '.' . $id;
-        } elseif ($assetName !== 'com_audatoria') {
-             // Para una categoría/tipo, ej. com_audatoria.timeline
-            $assetName = 'com_audatoria.' . $assetName;
-        }
-        // Si $assetName es 'com_audatoria', es para el componente en general.
-
-        $actions = [
-            'core.admin', 'core.manage', 'core.create', 'core.delete',
-            'core.edit', 'core.edit.state', 'core.edit.own',
-        ];
-
-        // Permisos personalizados específicos de tu componente
-        // Ejemplo: si $assetName se refiere a la sección 'channel'
-        if (strpos($assetName, 'com_audatoria.channel') === 0 || $assetName === 'com_audatoria.channel') {
-             $actions[] = 'channel.import'; // Asegúrate que esta acción esté en access.xml
+        if (!empty($assetSection) && $assetSection !== 'component') {
+            $assetName .= '.' . $assetSection;
         }
 
-
-        foreach ($actions as $action) {
-            $result->set($action, $user->authorise($action, $assetName));
+        if ($id > 0 && $assetSection !== 'component') {
+            $assetName .= '.' . (int) $id;
         }
 
+        $path = JPATH_ADMINISTRATOR . '/components/com_audatoria/access.xml';
+        $xpathSectionNode = ($assetSection && $assetSection !== 'component') ? $assetSection : 'component';
+        $actionsFromFile = Access::getActionsFromFile($path, "/access/section[@name='" . $xpathSectionNode . "']/");
+
+        $actionsToAuthorize = [];
+        if (!empty($actionsFromFile)) {
+            foreach ($actionsFromFile as $action) {
+                $actionsToAuthorize[] = $action->name;
+            }
+        } elseif ($xpathSectionNode === 'component') {
+             $actionsToAuthorize = ['core.admin', 'core.manage', 'core.create', 'core.delete', 'core.edit', 'core.edit.state', 'core.edit.own'];
+        }
+        // Asegurar que 'channel.import' se evalúe si la sección es 'channel' y la acción existe en access.xml
+        if ($assetSection === 'channel' && $xpathSectionNode === 'channel') {
+             // Access::getActionsFromFile ya debería haber cargado 'channel.import' si está en la sección channel.
+             // Si necesitas añadirla explícitamente SIEMPRE para la sección 'channel', puedes hacerlo,
+             // pero es mejor que esté definida en access.xml.
+             // Ejemplo: si channel.import está en access.xml:
+             // if (!in_array('channel.import', $actionsToAuthorize)) { /* ...podrías añadirlo o no, según tu lógica */ }
+        }
+
+        foreach ($actionsToAuthorize as $actionName) {
+            $result->set($actionName, $user->authorise($actionName, $assetName));
+        }
+        
         return $result;
     }
 
-    public static function getSidebarItems(string $activeView = 'timelines'): array
+    public static function getSidebarItems(string $activeView = ''): array
     {
-        $items = [];
-        $user = Factory::getApplication()->getIdentity(); // Para comprobar permisos si es necesario
+        $app = Factory::getApplication();
+        $input = $app->input; 
+        if (empty($activeView)) {
+            $activeView = $input->getCmd('view', 'timelines');
+        }
 
-        // Dashboard (si existe)
-        // if ($user->authorise('core.manage', 'com_audatoria')) { // Ejemplo de permiso
-        //     $items[] = [
-        //         'title' => Text::_('COM_AUDATORIA_SUBMENU_DASHBOARD'), // Necesitas esta cadena de idioma
-        //         'link' => 'index.php?option=com_audatoria&view=dashboard', // Asume que tienes una vista 'dashboard'
-        //         'active' => ($activeView === 'dashboard'),
-        //         'icon' => 'icon-home', // O el icono que prefieras
-        //     ];
-        // }
+        $items = [];
 
         $items[] = [
             'title' => Text::_('COM_AUDATORIA_SUBMENU_TIMELINES'),
@@ -75,37 +79,18 @@ class AudatoriaHelper
             'title' => Text::_('COM_AUDATORIA_SUBMENU_CHANNELS'),
             'link' => 'index.php?option=com_audatoria&view=channels',
             'active' => ($activeView === 'channels' || $activeView === 'channel'),
-            'icon' => 'icon-youtube', // O 'icon-podcast' si es más genérico
+            'icon' => 'icon-podcast',
         ];
         
-        // Ejemplo de añadir condicionalmente basado en permisos
-        // if ($user->authorise('core.options', 'com_audatoria')) {
-        //     $items[] = [
-        //        'title'    => Text::_('JGLOBAL_CONFIGURATION'),
-        //        'link'     => 'index.php?option=com_config&view=component&component=com_audatoria',
-        //        'active'   => ($activeView === 'config'),
-        //        'icon'     => 'icon-cogs',
-        //    ];
-        // }
-
-        // Permitir a otros componentes añadir a este menú lateral (opcional)
-        // Factory::getApplication()->triggerEvent('onGetAudatoriaSidebarItems', [&$items, $activeView]);
-
+        $user = $app->getIdentity(); // CORREGIDO
+        if ($user->authorise('core.admin', 'com_audatoria')) {
+            $items[] = [
+               'title'    => Text::_('JOPTIONS'),
+               'link'     => 'index.php?option=com_config&view=component&component=com_audatoria',
+               'active'   => ($input->getCmd('option') === 'com_config' && $input->getCmd('view') === 'component' && $input->getCmd('component') === 'com_audatoria'),
+               'icon'     => 'icon-cog',
+           ];
+        }
         return $items;
     }
-
-    // getFilterFields no es tan común aquí, usualmente se define en el modelo (getFilterForm).
-    // Pero si lo usas, asegúrate que el path sea correcto.
-    /*
-    public static function getFilterFields(string $viewName): string
-    {
-        // Esto debería apuntar a administrator/forms/filter_VIEWNAME.xml
-        $path = JPATH_COMPONENT_ADMINISTRATOR . '/forms/filter_' . $viewName . '.xml';
-
-        if (file_exists($path)) {
-            return $path;
-        }
-        return ''; 
-    }
-    */
 }
