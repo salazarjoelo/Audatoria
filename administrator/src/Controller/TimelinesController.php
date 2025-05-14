@@ -1,11 +1,10 @@
 <?php
-namespace Salazarjoelo\Component\Audatoria\Administrator\Controller;
+namespace Salazarjoelo\Component\Audatoria\Administrator\Controller; // Namespace Correcto
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\AdminController;
-// Si necesitas Factory para input u otras cosas directamente aquí:
-// use Joomla\CMS\Factory;
+use Joomla\CMS\Factory; // Para Factory::$application
 
 class TimelinesController extends AdminController
 {
@@ -13,7 +12,7 @@ class TimelinesController extends AdminController
      * El prefijo para los mensajes del controlador.
      * @var string
      */
-    protected $text_prefix = 'COM_AUDATORIA_TIMELINES';
+    protected $text_prefix = 'COM_AUDATORIA_TIMELINES'; // Asegúrate de que esta constante de idioma exista
 
     /**
      * Nombre de la vista por defecto para la lista.
@@ -39,7 +38,7 @@ class TimelinesController extends AdminController
      * @param  string $name    El nombre del modelo. Default 'Timeline' para acciones sobre un item.
      * @param  string $prefix  El prefijo para el nombre de la clase PHP.
      * @param  array  $config  Array de parámetros de configuración.
-     * @return \Joomla\CMS\MVC\Model\BaseDatabaseModel|false
+     * @return \Joomla\CMS\MVC\Model\AdminModel|\Joomla\CMS\MVC\Model\BaseDatabaseModel|false
      */
     public function getModel($name = 'Timeline', $prefix = 'Salazarjoelo\\Component\\Audatoria\\Administrator\\Model', $config = ['ignore_request' => true])
     {
@@ -49,4 +48,8 @@ class TimelinesController extends AdminController
 
         return $model;
     }
+
+    // El método display es heredado de BaseController y usualmente no necesita ser sobrescrito
+    // si tu vista se llama igual que el controlador (plural) o si view_list está bien definido.
+    // Este se encargará de llamar a la vista TimelinesView (HtmlView).
 }

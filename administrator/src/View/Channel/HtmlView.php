@@ -1,6 +1,6 @@
 <?php
-// Ubicación: administrator/views/channel/view.html.php
-namespace Salazarjoelo\Component\Audatoria\Administrator\View\Channel; // NAMESPACE CORREGIDO
+// Ubicación: administrator/src/View/Channel/HtmlView.php (o view.html.php)
+namespace Salazarjoelo\Component\Audatoria\Administrator\View\Channel; // NAMESPACE CORRECTO
 
 \defined('_JEXEC') or die;
 
@@ -10,7 +10,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
 use Salazarjoelo\Component\Audatoria\Administrator\Helper\AudatoriaHelper; // Namespace del Helper CORREGIDO
 
-class ChannelView extends BaseFormView // Nombre de clase y herencia CORREGIDOS
+class HtmlView extends BaseFormView // Nombre de clase HtmlView si el archivo es HtmlView.php
 {
     protected $form;
     protected $item;
