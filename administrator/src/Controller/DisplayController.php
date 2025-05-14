@@ -21,6 +21,14 @@ class DisplayController extends BaseController
     public function display($cachable = false, $urlparams = [])
     {
         // El BaseController se encarga de cargar la vista basada en el parámetro 'view'.
+        // Si la vista por defecto es 'timelines', cargará TimelinesView.
+        // Si es otra, o si no se especifica view y el defaultView en BaseController es 'cpanel' o similar,
+        // podría necesitar un ajuste o una vista CpanelView por defecto si quieres un dashboard.
+        // Por ahora, se asume que si no hay 'view', usará el defaultView de BaseController
+        // o que siempre se accederá con &view=timelines (o items, channels).
+        
+        // Si el enlace por defecto en el menú de admin es view=timelines,
+        // TimelinesController se encargará. Este DisplayController es un fallback.
         return parent::display($cachable, $urlparams);
     }
 }
